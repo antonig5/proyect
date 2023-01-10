@@ -1,12 +1,13 @@
 import { Table } from "antd";
 import React, { useEffect, useState } from "react";
+import Constants from '../utils/Constants';
 
 const Vehiculos = () => {
   const [data, setData] = useState([]);
   useEffect(() => {
     async function fetchData() {
       const response = await fetch(
-        "http://localhost:1337/api/vehiculos?populate=*"
+        `${Constants.URL}/api/vehiculos?populate=*`
       );
       const data = await response.json();
       const vehiculo = [];

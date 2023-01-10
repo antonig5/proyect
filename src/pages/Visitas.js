@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
+import Constants from '../utils/Constants';
 import {
   Input,
   Card,
@@ -38,7 +39,7 @@ const Visitas = () => {
   };
 
   const GetMarca = () => {
-    fetch("http://localhost:1337/api/marcas")
+    fetch(`${Constants.URL}/api/marcas`)
       .then((res) => res.json())
       .then((res) => {
         setMarca(res.data);
@@ -46,7 +47,7 @@ const Visitas = () => {
   };
 
   const GetTipo = () => {
-    fetch("http://localhost:1337/api/tipos-de-vehiculos")
+    fetch(`${Constants.URL}/api/tipos-de-vehiculos`)
       .then((res) => res.json())
       .then((res) => {
         setTipo(res.data);
@@ -54,7 +55,7 @@ const Visitas = () => {
   };
   //http://192.168.0.113:1337/api/global?populate[0]=footer.logo&populate[1]=footer.columns.links
   const onSearch = (value) => {
-    fetch("http://localhost:1337/api/visitas/" + value + "?populate=*")
+    fetch(`${Constants.URL}/api/visitas/${value}?populate[0]=visitante.vehiculos&populate[1]=visitante`)
       .then((res) => res.json())
       .then((res) => {
         console.log(res.data.id);
@@ -65,9 +66,7 @@ const Visitas = () => {
 
   const handledSubmit = (element) => {
     fetch(
-      "http://localhost:1337/api/visitantes/" +
-        datos.attributes.visitante.data.id +
-        "?populate=*",
+      `${Constants.URL}/api/visitantes/${datos.attributes.visitante.data.id}?populate=*`,
       {
         method: "PUT",
         headers: {
@@ -87,7 +86,7 @@ const Visitas = () => {
   };
 
   const EstadoSubmit = (data) => {
-    fetch("http://localhost:1337/api/visitas/" + datos.id + "?populate=*", {
+    fetch(`${Constants.URL}/api/visitas/${datos.id}?populate=*`, {
       method: "PUT",
       headers: {
         "content-type": "application/json",
@@ -102,8 +101,7 @@ const Visitas = () => {
       .then((res) => {
         console.log(res.data.attributes.visitante.data.id);
         fetch(
-          "http://localhost:1337/api/vehiculos?populate=*",
-
+          `${Constants.URL}/api/vehiculos?populate=*`,
           {
             method: "POST",
             headers: {
@@ -122,9 +120,7 @@ const Visitas = () => {
           .then((respon) => {
             console.log(respon.data.id);
             fetch(
-              "http://localhost:1337/api/visitantes/" +
-                res.data.attributes.visitante.data.id +
-                "?populate=*",
+              `${Constants.URL}/api/visitantes/${res.data.attributes.visitante.data.id}?populate=*`,
               {
                 method: "PUT",
                 headers: {

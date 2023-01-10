@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Form, Select, DatePicker, Button, message } from "antd";
+import Constants from '../utils/Constants';
 const { Option } = Select;
 
 const Parqueadero = () => {
@@ -9,7 +10,7 @@ const Parqueadero = () => {
 
   useEffect(() => {
     async function fetchData() {
-      const response = await fetch("http://localhost:1337/api/vehiculos");
+      const response = await fetch(`${Constants.URL}/api/vehiculos`);
       const data = await response.json();
       setVehiculos(data.data);
     }
@@ -17,7 +18,7 @@ const Parqueadero = () => {
   }, []);
 
   const handleSubmit = (salida, ingreso, vehiculo) => {
-    fetch("http://localhost:1337/api/parqueaderos", {
+    fetch(`${Constants.URL}/api/parqueaderos`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

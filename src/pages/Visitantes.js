@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
 import domtoimage from "dom-to-image";
 import Barcode from "react-barcode";
+import Constants from '../utils/Constants';
 import {
+
   AutoComplete,
   Button,
   Cascader,
@@ -25,7 +27,7 @@ const Visitantes = () => {
     setIsModalOpen(false);
   };
   const onFinish = (data) => {
-    fetch("http://localhost:1337/api/visitantes", {
+    fetch(`${Constants.URL}/api/visitantes`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -44,7 +46,7 @@ const Visitantes = () => {
       .then((res) => res.json())
       .then((res) => {
         if ((res.status = 200)) {
-          fetch("http://localhost:1337/api/visitas", {
+          fetch(`${Constants.URL}/api/visitas`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
