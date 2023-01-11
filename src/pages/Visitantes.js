@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import domtoimage from "dom-to-image";
 import Barcode from "react-barcode";
 import Constants from '../utils/Constants';
+import dayjs from "dayjs";
 import {
 
   AutoComplete,
@@ -68,6 +69,14 @@ const Visitantes = () => {
         }
       });
   };
+
+  const disabledDate = (current) => {
+    // Can not select days before today and today
+    return (
+      current &&
+      current <  dayjs().add(23.9, 'hour')
+    );
+  };
   function downloadBarcode() {
     const barcode = document.getElementById("barcode");
     domtoimage.toPng(barcode).then(function (dataUrl) {
@@ -87,12 +96,22 @@ const Visitantes = () => {
               name="documento"
               rules={[
                 {
+                  min: 8,
+                  message: "Se requiere un documento!",
+                },
+                {
+                  max: 10,
+                  message: "Se requiere un documento!",
+                },
+                {
                   required: true,
-                  message: "Please input your nickname!",
+
+                  message: "Se requiere un documento!",
                 },
               ]}
             >
-              <InputNumber
+              <Input
+                type="number"
                 placeholder="Documento"
                 minLength={1}
                 maxLength={10}
@@ -196,7 +215,7 @@ const Visitantes = () => {
           label="Ingreso"
           rules={[{ required: true, message: "Please select a date" }]}
         >
-          <RangePicker showTime />
+          <RangePicker showTime disabledDate={disabledDate} />
         </Form.Item>
 
         <Form.Item>
