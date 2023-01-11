@@ -64,13 +64,6 @@ const Empleados = () => {
             required: true,
             message: "Please input your username!",
           },
-          {
-            validator: async (_, documento) => {
-              if (documento.length < 0) {
-                return Promise.reject(new Error("At least 2 passengers"));
-              }
-            },
-          },
         ]}
       >
         <Input placeholder="Documento" type="number" />
