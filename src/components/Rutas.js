@@ -1,6 +1,7 @@
 import React from "react";
 
 import { Routes, Route } from "react-router-dom";
+import Empleados from "../pages/Empleados";
 import Home from "../pages/Home";
 import Login from "../pages/Login";
 import Parqueadero from "../pages/Parqueadero";
@@ -17,6 +18,7 @@ const Rutas = () => {
         <Route path="/visitantes" element={<Visitantes />} />
         <Route path="/visitas" element={<Visitas />} />
         <Route path="/vehiculos" element={<Vehiculos />} />
+        <Route path="/empleados" element={<Empleados />} />
         <Route path="/parqueadero" element={<Parqueadero />} />
         <Route path="*" element={<h1>nada</h1>}></Route>
       </Routes>
