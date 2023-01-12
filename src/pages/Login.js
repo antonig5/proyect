@@ -3,7 +3,7 @@ import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { Button, Checkbox, Form, Input } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { setUser } from "../redux/actions";
-import Constants from '../utils/Constants';
+import Constants from "../utils/Constants";
 
 const Login = () => {
   const dispatch = useDispatch();
@@ -22,7 +22,7 @@ const Login = () => {
     })
       .then((res) => res.json())
       .then((res) => {
-        dispatch(setUser({ token: "h3f4gh3f24324hgfg3f2444444444hgf3h24" }));
+        dispatch(setUser({ res }));
       });
   };
 
