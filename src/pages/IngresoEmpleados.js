@@ -495,18 +495,21 @@ setModalOpen(false);
   //http://192.168.0.113:1337/api/global?populate[0]=footer.logo&populate[1]=footer.columns.links
   const onSearch = (value) => {
     fetch(
-      `${Constants.URL}/api/users/${value}?populate[0]=vehiculos.ingresovehiculos.parqueadero&populate[1]=elementos&populate[2]=ingreso_empleados&populate[3]=horario`
+      `${Constants.URL}/api/users/${value}?populate[0]=vehiculos.ingresovehiculos.parqueadero&populate[1]=elementos&populate[2]=ingreso_empleados&populate[3]=horario&populate[4]=dependencia`
     )
       .then((res) => res.json())
       .then((res) => {
         console.log(res.ingreso_empleados);
         console.log("busqueda");
         const d = res.ingreso_empleados.filter((el) => el.estado === "ingreso");
-        console.log(d.length);
+        console.log("prueba idvisita");
+        
         if (d.length > 0) {
           res.estadovisita = 1;
+          res.idvisita = d[0].id
         } else {
           res.estadovisita = 0;
+          
         }
 
         const array = [];
@@ -711,11 +714,11 @@ console.log(res);
                 datos.estadovisita == 0 ? (
                   <>
                     <Input
-                        placeholder="Motivo de ingreso tarde"
-                        onChange={(text) => {
-                          setMotivo(text.target.value)
-                          console.log(text.target.value);
-                        }}
+                      placeholder="Motivo de ingreso tarde"
+                      onChange={(text) => {
+                        setMotivo(text.target.value);
+                        console.log(text.target.value);
+                      }}
                     />
                     <Button
                       onClick={() => {
@@ -729,7 +732,7 @@ console.log(res);
                 ) : (
                   <Button
                     onClick={() => {
-                      salidaVisitante(datos.id);
+                      salidaVisitante(datos.idvisita);
                     }}
                     type="primary"
                     danger
@@ -753,7 +756,7 @@ console.log(res);
           ) : (
             <Button
               onClick={() => {
-                salidaVisitante(datos.id);
+                salidaVisitante(datos.idvisita);
               }}
               type="primary"
               danger
@@ -788,7 +791,11 @@ console.log(res);
                   />
                   <Button
                     onClick={() => {
-                        salidaVisitante(datos.id, "salida-temprano", motivo);
+                      salidaVisitante(
+                        datos.idvisita,
+                        "salida-temprano",
+                        motivo
+                      );
                     }}
                     type="primary"
                     danger
@@ -814,7 +821,7 @@ console.log(res);
             ) : (
               <Button
                 onClick={() => {
-                  salidaVisitante(datos.id);
+                  salidaVisitante(datos.idvisita);
                 }}
                 type="primary"
                 danger
@@ -829,8 +836,28 @@ console.log(res);
       <div className="site-card-wrapper">
         <Row gutter={16}>
           <Col span={8} style={{ marginBottom: 10 }}>
+            <Card title="Nombre" bordered={false}>
+              {datos.id > 0 ? datos.nombre : null}
+            </Card>
+          </Col>
+          <Col span={8} style={{ marginBottom: 10 }}>
+            <Card title="Apellidos" bordered={false}>
+              {datos.id > 0 ? datos.apellido : null}
+            </Card>
+          </Col>
+          <Col span={8} style={{ marginBottom: 10 }}>
             <Card title="Documento" bordered={false}>
               {datos.id > 0 ? datos.documento : null}
+            </Card>
+          </Col>
+          <Col span={8} style={{ marginBottom: 10 }}>
+            <Card title="Correo" bordered={false}>
+              {datos.id > 0 ? datos.email : null}
+            </Card>
+          </Col>
+          <Col span={8} style={{ marginBottom: 10 }}>
+            <Card title="Dependencia" bordered={false}>
+              {datos.id > 0 ? datos.dependencia.dependencia : null}
             </Card>
           </Col>
         </Row>

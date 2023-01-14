@@ -195,7 +195,70 @@ const deleteVehiculo = (data)=> {
   
   const ingresarVehiculo = (data) => {
     console.log(data);
-    if (data.topvehiculo=="moto") {
+    if (data.topvehiculo == "moto") {
+           fetch(
+             `${Constants.URL}/api/parqueaderomotos?filters[id][$gt]=30&filters[estado][$eq]=false`,
+             {
+               method: "GET",
+               headers: {
+                 "content-type": "application/json",
+               },
+             }
+           )
+             .then((res) => res.json())
+             .then((res) => {
+               console.log("ingreso");
+               //agregar ingreso
+               fetch(
+                 `${Constants.URL}/api/ingresovehiculos?populate[0]=parqueadero&populate[1]=parqueaderomoto`,
+                 {
+                   method: "POST",
+                   headers: {
+                     "content-type": "application/json",
+                   },
+                   body: JSON.stringify({
+                     data: { parqueaderomoto: res.data[0].id, vehiculo: data.idv },
+                   }),
+                 }
+               )
+                 .then((resi) => resi.json())
+                 .then((resi) => {
+                   console.log("peuabamoto");
+                   console.log(resi.data.attributes.parqueaderomoto.data.id);
+                   onSearch(datos.id);
+                   message.success(
+                     "Parqueadero asignado #" +
+                       resi.data.attributes.parqueaderomoto.data.id
+                   );
+
+
+                   fetch(
+                     `${Constants.URL}/api/parqueaderomotos/${resi.data.attributes.parqueaderomoto.data.id}`,
+                     {
+                       method: "PUT",
+                       headers: {
+                         "content-type": "application/json",
+                       },
+                       body: JSON.stringify({
+                         data: {
+                           estado: true,
+                         },
+                       }),
+                     }
+                   )
+                     .then((resi) => resi.json())
+                     .then((resi) => {
+                       console.log(resi);
+                       onSearch(datos.id);
+                       message.success(
+                         "Parqueadero asignado #" +
+                           resi.data.attributes.parqueaderomoto.data.id
+                       );
+                     });
+                 });
+             });
+
+
     } else if (data.topvehiculo == "carro") {
       fetch(`${Constants.URL}/api/parqueaderos?filters[id][$gt]=35&filters[estado][$eq]=false`, {
         method: "GET",
@@ -255,8 +318,10 @@ const deleteVehiculo = (data)=> {
     
   };
   
-    const salidaVehiculo = (data) => {
-          console.log(data);
+  const salidaVehiculo = (data) => {
+      
+
+    if (data.topvehiculo == "carro"){
       fetch(`${Constants.URL}/api/vehiculos/${data.idv}?populate[0]=ingresovehiculos.parqueadero`, {
         method: "GET",
         headers: {
@@ -269,48 +334,109 @@ const deleteVehiculo = (data)=> {
           ingresos.map((ingreso) => {
             console.log(ingreso.id);
 
-            if (ingreso.attributes.estado ==1) {
+            if (ingreso.attributes.estado == 1) {
               
-            fetch(`${Constants.URL}/api/ingresovehiculos/${ingreso.id}`, {
-              method: "PUT",
-              headers: {
-                "content-type": "application/json",
-              },
-              body: JSON.stringify({
-                data: {
-                  estado: 2,
+              fetch(`${Constants.URL}/api/ingresovehiculos/${ingreso.id}`, {
+                method: "PUT",
+                headers: {
+                  "content-type": "application/json",
                 },
-              }),
-            }).then((res) => res.json())
-              .then((res) => {
-                console.log(res);
-                //liberar parqueadero
-                     fetch(
-                       `${Constants.URL}/api/parqueaderos/${ingreso.attributes.parqueadero.data.id}`,
-                       {
-                         method: "PUT",
-                         headers: {
-                           "content-type": "application/json",
-                         },
-                         body: JSON.stringify({
-                           data: {
-                             estado: false,
-                           },
-                         }),
-                       }
-                     )
-                       .then((res) => res.json())
-                       .then((res) => {
-                         console.log(res);
-message.success("el Vehiculo a salido con exito")
-                         onSearch(datos.id);
-                       });
-              });
+                body: JSON.stringify({
+                  data: {
+                    estado: 2,
+                  },
+                }),
+              }).then((res) => res.json())
+                .then((res) => {
+                  console.log(res);
+                  //liberar parqueadero
+                  fetch(
+                    `${Constants.URL}/api/parqueaderos/${ingreso.attributes.parqueadero.data.id}`,
+                    {
+                      method: "PUT",
+                      headers: {
+                        "content-type": "application/json",
+                      },
+                      body: JSON.stringify({
+                        data: {
+                          estado: false,
+                        },
+                      }),
+                    }
+                  )
+                    .then((res) => res.json())
+                    .then((res) => {
+                      console.log(res);
+                      message.success("el Vehiculo a salido con exito")
+                      onSearch(datos.id);
+                    });
+                });
             }
 
           })
 
         });
+    
+    } else if (data.topvehiculo == "moto") {
+
+        fetch(
+          `${Constants.URL}/api/vehiculos/${data.idv}?populate[0]=ingresovehiculos.parqueaderomoto`,
+          {
+            method: "GET",
+            headers: {
+              "content-type": "application/json",
+            },
+          }
+        )
+          .then((res) => res.json())
+          .then((res) => {
+            const ingresos = res.data.attributes.ingresovehiculos.data;
+            ingresos.map((ingreso) => {
+              console.log(ingreso.id);
+
+              if (ingreso.attributes.estado == 1) {
+                fetch(`${Constants.URL}/api/ingresovehiculos/${ingreso.id}`, {
+                  method: "PUT",
+                  headers: {
+                    "content-type": "application/json",
+                  },
+                  body: JSON.stringify({
+                    data: {
+                      estado: 2,
+                    },
+                  }),
+                })
+                  .then((res) => res.json())
+                  .then((res) => {
+                    console.log(res);
+                    //liberar parqueadero
+                    fetch(
+                      `${Constants.URL}/api/parqueaderomotos/${ingreso.attributes.parqueaderomoto.data.id}`,
+                      {
+                        method: "PUT",
+                        headers: {
+                          "content-type": "application/json",
+                        },
+                        body: JSON.stringify({
+                          data: {
+                            estado: false,
+                          },
+                        }),
+                      }
+                    )
+                      .then((res) => res.json())
+                      .then((res) => {
+                        console.log(res);
+                        message.success("el Vehiculo a salido con exito");
+                        onSearch(datos.id);
+                      });
+                  });
+              }
+            });
+          });
+    
+      
+  }
     };
   
     const columnselementos = [
@@ -476,7 +602,7 @@ setModalOpen(false);
   //http://192.168.0.113:1337/api/global?populate[0]=footer.logo&populate[1]=footer.columns.links
   const onSearch = (value) => {
     fetch(
-      `${Constants.URL}/api/visitas/${value}?populate[0]=visitante.vehiculos&populate[1]=visitante.vehiculos.ingresovehiculos.parqueadero&populate[2]=visitante.vehiculos.ingresovehiculos&populate[3]=visitante.elementos&filters[visitante][vehiculos][ingresovehiculos][estado][$eq]=2`
+      `${Constants.URL}/api/visitas/${value}?populate[0]=visitante.vehiculos&populate[1]=visitante.vehiculos.ingresovehiculos.parqueadero&populate[2]=visitante.vehiculos.ingresovehiculos&populate[3]=visitante.elementos&populate[4]=visitante.vehiculos.ingresovehiculos.parqueaderomoto&filters[visitante][vehiculos][ingresovehiculos][estado][$eq]=2`
     )
       .then((res) => res.json())
       .then((res) => {
@@ -489,22 +615,22 @@ setModalOpen(false);
         } else {
           const array = [];
           const arrayelementos = [];
+          console.log(res.data);
 
-          res.data.attributes.visitante.data.attributes.elementos.data.map(
-            (e) => {
+          if (res.data.attributes.visitante.data.attributes.elementos !== null) {
+            res.data.attributes.visitante.data.attributes.elementos.data.map((e) => {
               arrayelementos.push({
                 key: e.id,
                 ide: e.id,
                 nombre: e.attributes.nombre,
-                estado:
-                  e.attributes.estado == 1 ? "ingresado" : "no ha ingresado",
-                estadoe:
-                  e.attributes.estado ,
+                estado: e.attributes.estado == 1 ? "ingresado" : "no ha ingresado",
+                estadoe: e.attributes.estado,
               });
+            });
+          }
+        
 
-              
-            }
-          );
+
 setElementos(arrayelementos);
           res.data.attributes.visitante.data.attributes.vehiculos.data.map(
             (v) => {
@@ -529,9 +655,14 @@ setElementos(arrayelementos);
                   v.attributes.ingresovehiculos.data !== null
                     ? `${
                         d.length > 0
-                          ? "ingresado par" +
-                            v.attributes.ingresovehiculos.data[0].attributes
-                              .parqueadero.data.id
+                          ? v.attributes.ingresovehiculos.data[0].attributes
+                              .parqueadero == null
+                            ? "Ingresado par:" +
+                              v.attributes.ingresovehiculos.data[0].attributes
+                                .parqueadero.data.id
+                            : "Ingresado par:" +
+                              v.attributes.ingresovehiculos.data[0].attributes
+                                .parqueaderomoto.data.id
                           : "no ha ingresado"
                       }  `
                     : "no ha ingresado",
