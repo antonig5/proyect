@@ -59,6 +59,7 @@ const Visitantes = () => {
                 visitante: res.data.id,
                 entrada: data.fecha[0],
                 salida: data.fecha[1],
+                tipovisitante: "visitante",
               },
             }),
           })

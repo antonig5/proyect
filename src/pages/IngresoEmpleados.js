@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
 import Constants from '../utils/Constants';
+import dayjs from "dayjs";
 import {
   Input,
   Card,
@@ -22,41 +23,51 @@ const { confirm } = Modal;
 
 
 
-const Visitas = () => {
+const IngresoEmpleados = () => {
 
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [datos, setDatos] = useState([]);
   const [marca, setMarca] = useState([]);
   const [tipo, setTipo] = useState([]);
- const [ModalOpen, setModalOpen] = useState(false);
+  const [ModalOpen, setModalOpen] = useState(false);
   const [vehiculos, setVehiculos] = useState([])
   const [elementos, setElementos] = useState([]);
+  const [motivo, setMotivo] = useState("");
   
 
-  const ingresarVisitante = (idvisita) => {
+  const ingresarVisitante = (empleadoid, novedad, motivo) => {
+
+
+          console.log(novedad+"  "+motivo);
 
       confirm({
         title: "Desea ingresar este visitante?",
         
       
         onOk() {
-              fetch(`${Constants.URL}/api/visitas/${idvisita}`, {
-                method: "PUT",
+              fetch(`${Constants.URL}/api/ingreso-empleados`, {
+                method: "POST",
                 headers: {
                   "content-type": "application/json",
                 },
                 body: JSON.stringify({
                   data: {
-                    estadovisita: 1,
+                    estado: "ingreso",
+                    users_permissions_user: {
+                      disconnect: [],
+                      connect: [{ id: datos.id }]
+                    },
+                    novedad: novedad,
+                    motivoentrada: motivo,
                   },
                 }),
               })
                 .then((res) => res.json())
                 .then((res) => {
                   console.log(res);
-                  message.success("Ingresado Correctamente")
-                  onSearch(datos.id)
+                  message.success("Ingresado Correctamente");
+                  onSearch(datos.id);
                 });
         },
         onCancel() {
@@ -127,19 +138,21 @@ const Visitas = () => {
      });
    };
 
-    const salidaVisitante = (idvisita) => {
+    const salidaVisitante = (idvisita, novedad, motivo) => {
       confirm({
         title: "Desea darle salida a este visitante?",
         content: "Recuerde dar salida a objetos y vehiculos antes de dar salida al visitante",
         onOk() {
-          fetch(`${Constants.URL}/api/visitas/${idvisita}`, {
+          fetch(`${Constants.URL}/api/ingreso-empleados/${idvisita}`, {
             method: "PUT",
             headers: {
               "content-type": "application/json",
             },
             body: JSON.stringify({
               data: {
-                estadovisita: 2,
+                estado: "salida",
+                novedad: novedad,
+                motivoentrada: motivo,
               },
             }),
           })
@@ -147,7 +160,7 @@ const Visitas = () => {
             .then((res) => {
               console.log(res);
               message.success("El Visitante Salio Correctamente");
-              setDatos([])
+              setDatos([]);
             });
         },
         onCancel() {
@@ -197,59 +210,65 @@ const deleteVehiculo = (data)=> {
     console.log(data);
     if (data.topvehiculo=="moto") {
     } else if (data.topvehiculo == "carro") {
-      fetch(`${Constants.URL}/api/parqueaderos?filters[id][$gt]=35&filters[estado][$eq]=false`, {
-        method: "GET",
-        headers: {
-          "content-type": "application/json",
-        },
-      })
+      fetch(
+        `${Constants.URL}/api/parqueaderos?filters[id][$gt]=2&filters[id][$lte]=35&filters[estado][$eq]=false&pagination[limit]=100`,
+        {
+          method: "GET",
+          headers: {
+            "content-type": "application/json",
+          },
+        }
+      )
         .then((res) => res.json())
         .then((res) => {
-
-
           console.log("ingreso");
           //agregar ingreso
-             fetch(`${Constants.URL}/api/ingresovehiculos?populate[0]=parqueadero`, {
-               method: "POST",
-               headers: {
-                 "content-type": "application/json",
-               },
-               body: JSON.stringify({
-                 data: { parqueadero: res.data[0].id, vehiculo: data.idv },
-               }),
-             })
-               .then((resi) => resi.json())
-               .then((resi) => {
-                 console.log(resi);
-                 onSearch(datos.id);
-                 message.success("Parqueadero asignado #" + resi.data.attributes.parqueadero.data.id);
-                 
+          
+          fetch(
+            `${Constants.URL}/api/ingresovehiculos?populate[0]=parqueadero`,
+            {
+              method: "POST",
+              headers: {
+                "content-type": "application/json",
+              },
+              body: JSON.stringify({
+                data: { parqueadero: res.data[0].id, vehiculo: data.idv },
+              }),
+            }
+          )
+            .then((resi) => resi.json())
+            .then((resi) => {
+              console.log(resi);
+              onSearch(datos.id);
+              message.success(
+                "Parqueadero asignado #" +
+                  resi.data.attributes.parqueadero.data.id
+              );
 
-                             fetch(
-                               `${Constants.URL}/api/parqueaderos/${resi.data.attributes.parqueadero.data.id}`,
-                               {
-                                 method: "PUT",
-                                 headers: {
-                                   "content-type": "application/json",
-                                 },
-                                 body: JSON.stringify({
-                                   data: {
-                                     estado: true,
-                                   
-                                   },
-                                 }),
-                               }
-                             )
-                               .then((resi) => resi.json())
-                               .then((resi) => {
-                                 console.log(resi);
-                                 onSearch(datos.id);
-                                 message.success(
-                                   "Parqueadero asignado #" +
-                                     resi.data.attributes.parqueadero.data.id
-                                 );
-                               });
-               });
+              fetch(
+                `${Constants.URL}/api/parqueaderos/${resi.data.attributes.parqueadero.data.id}`,
+                {
+                  method: "PUT",
+                  headers: {
+                    "content-type": "application/json",
+                  },
+                  body: JSON.stringify({
+                    data: {
+                      estado: true,
+                    },
+                  }),
+                }
+              )
+                .then((resi) => resi.json())
+                .then((resi) => {
+                  console.log(resi);
+                  onSearch(datos.id);
+                  message.success(
+                    "Parqueadero asignado #" +
+                      resi.data.attributes.parqueadero.data.id
+                  );
+                });
+            });
         });
     }
     
@@ -476,82 +495,72 @@ setModalOpen(false);
   //http://192.168.0.113:1337/api/global?populate[0]=footer.logo&populate[1]=footer.columns.links
   const onSearch = (value) => {
     fetch(
-      `${Constants.URL}/api/visitas/${value}?populate[0]=visitante.vehiculos&populate[1]=visitante.vehiculos.ingresovehiculos.parqueadero&populate[2]=visitante.vehiculos.ingresovehiculos&populate[3]=visitante.elementos&filters[visitante][vehiculos][ingresovehiculos][estado][$eq]=2`
+      `${Constants.URL}/api/users/${value}?populate[0]=vehiculos.ingresovehiculos.parqueadero&populate[1]=elementos&populate[2]=ingreso_empleados&populate[3]=horario`
     )
       .then((res) => res.json())
       .then((res) => {
-        console.log(res);
-
-        if (res.data.attributes.estadovisita == 2) {
-          message.warning(
-            "No hay visitas pendientes que coincidan con este codigo de barras"
-          );
+        console.log(res.ingreso_empleados);
+        console.log("busqueda");
+        const d = res.ingreso_empleados.filter((el) => el.estado === "ingreso");
+        console.log(d.length);
+        if (d.length > 0) {
+          res.estadovisita = 1;
         } else {
-          const array = [];
-          const arrayelementos = [];
-
-          res.data.attributes.visitante.data.attributes.elementos.data.map(
-            (e) => {
-              arrayelementos.push({
-                key: e.id,
-                ide: e.id,
-                nombre: e.attributes.nombre,
-                estado:
-                  e.attributes.estado == 1 ? "ingresado" : "no ha ingresado",
-                estadoe:
-                  e.attributes.estado ,
-              });
-
-              
-            }
-          );
-setElementos(arrayelementos);
-          res.data.attributes.visitante.data.attributes.vehiculos.data.map(
-            (v) => {
-              const litain = v.attributes.ingresovehiculos.data;
-              console.log(litain);
-
-              const d = litain.filter((el) => el.attributes.estado === 1);
-
-              console.log(d);
-              array.push({
-                key: v.id,
-                placa: v.attributes.placa,
-                idv: v.id,
-                topvehiculo: v.attributes.topvehiculo,
-                estadob:
-                  v.attributes.ingresovehiculos.data !== null
-                    ? d.length > 0
-                      ? 1
-                      : null
-                    : "no ha ingresado",
-                estado:
-                  v.attributes.ingresovehiculos.data !== null
-                    ? `${
-                        d.length > 0
-                          ? "ingresado par" +
-                            v.attributes.ingresovehiculos.data[0].attributes
-                              .parqueadero.data.id
-                          : "no ha ingresado"
-                      }  `
-                    : "no ha ingresado",
-              });
-            }
-          );
-          setVehiculos(array);
-
-          console.log(
-            res.data.attributes.visitante.data.attributes.vehiculos.data
-          );
-
-          setDatos(res.data);
+          res.estadovisita = 0;
         }
 
-        // setVehiculos(res.data)
+        const array = [];
+        const arrayelementos = [];
+
+        res.elementos.map((e) => {
+          arrayelementos.push({
+            key: e.id,
+            ide: e.id,
+            nombre: e.nombre,
+            estado: e.estado == 1 ? "ingresado" : "no ha ingresado",
+            estadoe: e.estado,
+          });
+        });
+        setElementos(arrayelementos);
+        res.vehiculos.map((v) => {
+          const litain = v.ingresovehiculos;
+          console.log(litain);
+
+          const d = litain.filter((el) => el.estado === 1);
+
+          console.log(d);
+          array.push({
+            key: v.id,
+            placa: v.placa,
+            idv: v.id,
+            topvehiculo: v.topvehiculo,
+            estadob:
+              v.ingresovehiculos !== null
+                ? d.length > 0
+                  ? 1
+                  : null
+                : "no ha ingresado",
+            estado:
+              v.ingresovehiculos !== null
+                ? `${
+                    d.length > 0
+                      ? "ingresado par" + v.ingresovehiculos[0].parqueadero.id
+                      : "no ha ingresado"
+                  }  `
+                : "no ha ingresado",
+          });
+        });
+        setVehiculos(array);
+
+        /*    console.log(
+                res.data.attributes.visitante.data.attributes.vehiculos.data
+              );*/
+
+        setDatos(res);
       });
   };
 
-  const handledSubmit = (element) => {
+  const crearElementos = (element) => {
 
 
 
@@ -568,18 +577,18 @@ setElementos(arrayelementos);
         
 console.log(res);
     fetch(
-      `${Constants.URL}/api/visitantes/${datos.attributes.visitante.data.id}?populate=*`,
+      `${Constants.URL}/api/users/${datos.id}?populate=*`,
       {
         method: "PUT",
         headers: {
           "content-type": "application/json",
         },
         body: JSON.stringify({
-          data: {
+         
             elementos: {
               connect: [{id: res.data.id}]
             },
-          },
+          
         }),
       }
     )
@@ -598,7 +607,7 @@ console.log(res);
   const EstadoSubmit = (data) => {
 
  
-        console.log(datos.attributes.visitante.data.id);
+        console.log(datos.id);
         fetch(`${Constants.URL}/api/vehiculos`, {
           method: "POST",
           headers: {
@@ -621,38 +630,34 @@ console.log(res);
               message.error("Error al crear vehiculo valide los datos e intente de nuevo")
             } else {
 
-               fetch(
-              `${Constants.URL}/api/visitantes/${datos.attributes.visitante.data.id}?populate=*`,
-              {
-                method: "PUT",
-                headers: {
-                  "content-type": "application/json",
-                },
-                body: JSON.stringify({
-                  data: {
-                    vehiculos: {
-                      connect: [{ id: respon.data.id }],
-                    },
-                  },
-                }),
-              }
-            )
-              .then((res) => res.json())
-              .then((res) => {
-                console.log(res);
-                if (res.data!==null) {
-                  onSearch(datos.id);
-                  message.success("Vehiculo creado y asignado correctamente")
-                } else {
-                      message.success(
-                        "no fue posible asignar el vehiculo"
-                      );
-                }
-               
-              })
-              .catch((err) => {
-                console.log(err);
-              });
+               fetch(`${Constants.URL}/api/users/${datos.id}?populate=*`, {
+                 method: "PUT",
+                 headers: {
+                   "content-type": "application/json",
+                 },
+                 body: JSON.stringify({
+                   
+                     vehiculos: {
+                       connect: [{ id: respon.data.id }],
+                     },
+                   
+                 }),
+               })
+                 .then((res) => res.json())
+                 .then((res) => {
+                   console.log(res);
+                   if (res.data !== null) {
+                     onSearch(datos.id);
+                     message.success(
+                       "Vehiculo creado y asignado correctamente"
+                     );
+                   } else {
+                     message.success("no fue posible asignar el vehiculo");
+                   }
+                 })
+                 .catch((err) => {
+                   console.log(err);
+                 });
             }
            
           }).catch((err) => {
@@ -667,6 +672,13 @@ console.log(res);
     GetMarca();
     GetTipo();
   }, []);
+
+
+
+
+
+  
+
 
   return (
     <>
@@ -683,15 +695,121 @@ console.log(res);
         <>
           <Button onClick={showModal}>Agregar elementos</Button>
           <Button onClick={showModall}>ingresar vehiculos</Button>
-          {datos.attributes.estado == "Aprobada" ? (
-            datos.attributes.estadovisita == 0 ? (
+          {console.log("datos")}
+          {console.log(datos.esta)}
+        </>
+      ) : null}
+
+      {datos.estadovisita == 0 ? (
+        datos.id ? (
+          dayjs().format("YYYY-MM-DD HH:mm:ss") >
+          dayjs(
+            dayjs().format("YYYY-MM-DD ") + " " + datos.horario.horaentrada
+          ).format("YYYY-MM-DD HH:mm:ss") ? (
+            <>
+              {datos.permisoentrada == true ? (
+                datos.estadovisita == 0 ? (
+                  <>
+                    <Input
+                        placeholder="Motivo de ingreso tarde"
+                        onChange={(text) => {
+                          setMotivo(text.target.value)
+                          console.log(text.target.value);
+                        }}
+                    />
+                    <Button
+                      onClick={() => {
+                        ingresarVisitante(datos.id, "ingreso-tarde", motivo);
+                      }}
+                      type="primary"
+                    >
+                      Ingresar Empleado
+                    </Button>
+                  </>
+                ) : (
+                  <Button
+                    onClick={() => {
+                      salidaVisitante(datos.id);
+                    }}
+                    type="primary"
+                    danger
+                  >
+                    Salir
+                  </Button>
+                )
+              ) : null}
+
+              <p>es muy tarde para ingregar</p>
+            </>
+          ) : datos.estadovisita == 0 ? (
+            <Button
+              onClick={() => {
+                ingresarVisitante(datos.id);
+              }}
+              type="primary"
+            >
+              Ingresar Empleado
+            </Button>
+          ) : (
+            <Button
+              onClick={() => {
+                salidaVisitante(datos.id);
+              }}
+              type="primary"
+              danger
+            >
+              Salir
+            </Button>
+          )
+        ) : null
+      ) : datos.id ? (
+        dayjs().format("YYYY-MM-DD HH:mm:ss") <
+        dayjs(
+          dayjs().format("YYYY-MM-DD ") + " " + datos.horario.horasalida
+        ).format("YYYY-MM-DD HH:mm:ss") ? (
+          <>
+            {" "}
+            {datos.permisosalida == true ? (
+              datos.estadovisita == 0 ? (
+                <Button
+                  onClick={() => {
+                    ingresarVisitante(datos.id);
+                  }}
+                  type="primary"
+                >
+                  Ingresar Empleado
+                </Button>
+              ) : (
+                //Salida con permiso
+                <>
+                  <Input
+                    placeholder="Motivo de salida tarde"
+                    onChange={(text) => setMotivo(text)}
+                  />
+                  <Button
+                    onClick={() => {
+                        salidaVisitante(datos.id, "salida-temprano", motivo);
+                    }}
+                    type="primary"
+                    danger
+                  >
+                    Salir
+                  </Button>
+                </>
+              )
+            ) : null}
+            <p>es muy temprano para Salir</p>
+          </>
+        ) : (
+          <>
+            {datos.estadovisita == 0 ? (
               <Button
                 onClick={() => {
                   ingresarVisitante(datos.id);
                 }}
                 type="primary"
               >
-                Ingresar Visitante
+                Ingresar Empleado
               </Button>
             ) : (
               <Button
@@ -703,10 +821,20 @@ console.log(res);
               >
                 Salir
               </Button>
-            )
-          ) : null}
-        </>
+            )}
+          </>
+        )
       ) : null}
+
+      <div className="site-card-wrapper">
+        <Row gutter={16}>
+          <Col span={8} style={{ marginBottom: 10 }}>
+            <Card title="Documento" bordered={false}>
+              {datos.id > 0 ? datos.documento : null}
+            </Card>
+          </Col>
+        </Row>
+      </div>
 
       <Modal
         width={700}
@@ -783,7 +911,7 @@ console.log(res);
         onCancel={handleCancel}
       >
         {" "}
-        <Form onFinish={handledSubmit} autoComplete="off">
+        <Form onFinish={crearElementos} autoComplete="off">
           <Form.Item
             name="nombre"
             rules={[{ required: true, message: "Este campo es requerido" }]}
@@ -799,65 +927,8 @@ console.log(res);
         </Form>
         <Table columns={columnselementos} dataSource={elementos} />
       </Modal>
-      <div className="site-card-wrapper">
-        <Row gutter={16}>
-          <Col span={8} style={{ marginBottom: 10 }}>
-            <Card title="Estado" bordered={false}>
-              {datos.id > 0 ? (
-                <div
-                  style={{
-                    padding: "5px",
-                    borderRadius: "10px",
-                    color: "white",
-                    background:
-                      datos.attributes.estado == "Aprobada" ? "green" : "red",
-                  }}
-                >
-                  {datos.attributes.estado}
-                </div>
-              ) : null}
-            </Card>
-          </Col>
-          <Col span={8} style={{ marginBottom: 10 }}>
-            <Card title="Motivo" bordered={false}>
-              {datos.id > 0 ? datos.attributes.motivo : null}
-            </Card>
-          </Col>
-          <Col span={8} style={{ marginBottom: 10 }}>
-            <Card title="Asunto" bordered={false}>
-              {datos.id > 0 ? datos.attributes.asunto : null}
-            </Card>
-          </Col>
-          <Col span={8} style={{ marginBottom: 10 }}>
-            <Card title="Entrada" bordered={false}>
-              {datos.id > 0 ? datos.attributes.entrada : null}
-            </Card>
-          </Col>
-          <Col span={8}>
-            <Card title="Feha Estimada de Salida" bordered={false}>
-              {datos.id > 0 ? datos.attributes.salida : null}
-            </Card>
-          </Col>
-          <Col span={8}>
-            <Card title="visitante" bordered={false}>
-              {datos.id > 0
-                ? datos.attributes.visitante.data.attributes.nombre +
-                  " " +
-                  datos.attributes.visitante.data.attributes.apellido
-                : null}
-            </Card>
-          </Col>
-          <Col span={8}>
-            <Card title="Documento" bordered={false}>
-              {datos.id > 0
-                ? datos.attributes.visitante.data.attributes.documento
-                : null}
-            </Card>
-          </Col>
-        </Row>
-      </div>
     </>
   );
 };
 
-export default Visitas;
+export default IngresoEmpleados;

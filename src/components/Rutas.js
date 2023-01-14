@@ -9,6 +9,8 @@ import Vehiculos from "../pages/Vehiculos";
 import Visitantes from "../pages/Visitantes";
 import Visitas from "../pages/Visitas";
 import Navbar from "./Navbar";
+import Busqueda from '../pages/Busquedas';
+import IngresoEmpleados from '../pages/IngresoEmpleados';
 const Rutas = () => {
   return (
     <>
@@ -20,6 +22,8 @@ const Rutas = () => {
         <Route path="/vehiculos" element={<Vehiculos />} />
         <Route path="/empleados" element={<Empleados />} />
         <Route path="/parqueadero" element={<Parqueadero />} />
+        <Route path="/busqueda" element={<Busqueda />} />
+        <Route path="/ingresoempleados" element={<IngresoEmpleados />} />
         <Route path="*" element={<h1>nada</h1>}></Route>
       </Routes>
     </>
