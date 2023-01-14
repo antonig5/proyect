@@ -24,7 +24,10 @@ const Empleados = () => {
   const [ModalOpen, setModalOpen] = useState(false);
   const [marca, setMarca] = useState([]);
   const [tipo, setTipo] = useState([]);
+  const [id, setID] = useState({});
   const [form] = Form.useForm();
+
+  const [dataEditCar, setDataEditCar] = useState([]);
   const showModall = () => {
     setModalOpen(true);
   };
@@ -84,6 +87,19 @@ const Empleados = () => {
           <Button
             type="primary"
             onClick={() => {
+              setID(data);
+              const arr = [];
+              data.vehiculos.map((element) => {
+                arr.push({
+                  id: element.id,
+                  placa: element.placa,
+                  topvehiculo: element.topvehiculo,
+                  marca: element.marca.marca,
+                  tipo: element.tipos_de_vehiculo.tipo,
+                });
+              });
+              console.log(arr);
+              setDataEditCar(arr);
               setIsModalOpen(true);
               form.setFieldsValue({ documento: data.documento });
               form.setFieldsValue({ nombre: data.nombre });
@@ -92,6 +108,7 @@ const Empleados = () => {
               form.setFieldsValue({ email: data.email });
               form.setFieldsValue({ username: data.username });
               form.setFieldsValue({ placa: data.vehiculos.placa });
+              form.setFieldsValue({ vehiculo: arr });
               console.log(data);
             }}
           >
@@ -111,7 +128,9 @@ const Empleados = () => {
   };
 
   const GetUsers = () => {
-    fetch(`${Constants.URL}/api/users?populate=*`)
+    fetch(
+      `${Constants.URL}/api/users?populate[0]=vehiculos&populate[1]=vehiculos.marca&populate[2]=vehiculos.tipos_de_vehiculo`
+    )
       .then((res) => res.json())
       .then((res) => {
         setDatos(res);
@@ -126,6 +145,80 @@ const Empleados = () => {
       });
   };
 
+  const UsersEdit = (values) => {
+    const car = [];
+    console.log("values", values);
+    values.vehiculo.map((d) => {
+      console.log("vehiculonbms", d);
+      if (!d.id) {
+        fetch(`${Constants.URL}/api/vehiculos`, {
+          method: "POST",
+          headers: {
+            "content-type": "application/json",
+          },
+          body: JSON.stringify({
+            data: {
+              placa: d.placa,
+              marca: d.marca,
+              tipo: d.tipo,
+            },
+          }),
+        })
+          .then((resp) => resp.json())
+          .then((resp) => {
+            fetch(`${Constants.URL}/api/users/${id.id}?populate[0]=vehiculos`, {
+              method: "PUT",
+              headers: {
+                "content-type": "application/json",
+              },
+              body: JSON.stringify({
+                nombre: values.nombre,
+                edad: values.edad,
+                apellido: values.apellido,
+                documento: values.documento,
+                email: values.email,
+                username: values.username,
+                password: values.password,
+                dependencia: values.dependencia,
+                vehiculos: {
+                  connect: [{ id: resp.data.id }],
+                },
+                role: values.role,
+              }),
+            })
+              .then((res) => res.json())
+              .then((res) => {
+                GetUsers();
+              });
+          });
+      } else {
+        fetch(`${Constants.URL}/api/vehiculos/${d.id}`, {
+          method: "PUT",
+          headers: {
+            "content-type": "application/json",
+          },
+          body: JSON.stringify({
+            data: {
+              placa: d.placa,
+              marca: d.marca,
+              tipo: d.tipo,
+            },
+          }),
+        })
+          .then((r) => r.json())
+          .then((r) => {
+            car.push(r.data.id);
+          });
+      }
+    });
+    //map
+
+    /*
+     */
+
+    /* ;*/
+  };
+
   const onFinish = (value) => {
     console.log(value.vehiculo);
 
@@ -138,6 +231,9 @@ const Empleados = () => {
         },
         body: JSON.stringify({
           documento: value.documento,
+          nombre: value.nombre,
+          apellido: value.apellido,
+          edad: value.edad,
           email: value.email,
           username: value.username,
           password: value.password,
@@ -159,7 +255,7 @@ const Empleados = () => {
               data: {
                 placa: element.placa,
                 marca: element.marca,
-                tipo_de_vehiculo: element.tipo,
+                tipos_de_vehiculo: element.tipos_de_vehiculo,
               },
             }),
           })
@@ -207,6 +303,20 @@ const Empleados = () => {
       });
   };
 
+  const DeleteCars = (id) => {
+    fetch(`${Constants.URL}/api/vehiculos/${id}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => res.json())
+      .then((res) => {
+        message.success("Eliminado");
+        GetUsers();
+      });
+  };
+
   const GetDependencias = () => {
     fetch(`${Constants.URL}/api/dependencias`)
       .then((res) => res.json())
@@ -231,7 +341,12 @@ const Empleados = () => {
         onCancel={handleCancel}
         width={600}
       >
-        <Form form={form} layout="vertical" initialValues={{ remember: true }}>
+        <Form
+          form={form}
+          layout="vertical"
+          initialValues={{ remember: true }}
+          onFinish={UsersEdit}
+        >
           <Row gutter={16}>
             <Col span={12}>
               <Form.Item name="documento" label="documento">
@@ -300,10 +415,10 @@ const Empleados = () => {
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.List name="vehiculo">
-                {(fields, { add, remove }) => (
+              <Form.List name="vehiculo" onValuesChange={UsersEdit}>
+                {(fieldEdit, { add, remove }) => (
                   <>
-                    {fields.map(({ key, name, ...restField }) => (
+                    {fieldEdit.map(({ key, name, ...restField }) => (
                       <Space
                         key={key}
                         style={{
@@ -335,10 +450,10 @@ const Empleados = () => {
                           ]}
                         >
                           <Select placeholder="Tipo">
-                            {tipo.map((element) => {
+                            {tipo.map((e) => {
                               return (
-                                <Option key={element.id} value={element.id}>
-                                  {element.attributes.tipo}
+                                <Option key={e.id} value={e.id}>
+                                  {e.attributes.tipo}
                                 </Option>
                               );
                             })}
@@ -364,25 +479,29 @@ const Empleados = () => {
                             })}
                           </Select>
                         </Form.Item>
-                        <Form.Item name="topvehiculo">
+                        <Form.Item name={[name, " topvehiculo"]} {...restField}>
                           <Select
                             placeholder="vehiculo"
                             style={{
                               width: 120,
                             }}
-                            options={[
-                              {
-                                value: "carro",
-                                label: "Carro",
-                              },
-                              {
-                                value: "moto",
-                                label: "Moto",
-                              },
-                            ]}
-                          />
+                          >
+                            {" "}
+                            <Option value="carro" key={1}>
+                              Carro
+                            </Option>
+                            <Option value="moto" key={2}>
+                              Moto
+                            </Option>
+                          </Select>
                         </Form.Item>
-                        <MinusCircleOutlined onClick={() => remove(name)} />
+                        <MinusCircleOutlined
+                          onClick={() => {
+                            remove(name);
+                            DeleteCars(dataEditCar[key].id);
+                            console.log(dataEditCar[key].id);
+                          }}
+                        />
                       </Space>
                     ))}
                     <Form.Item>
@@ -457,6 +576,40 @@ const Empleados = () => {
                 ]}
               >
                 <Input placeholder="Documento" type="number" />
+              </Form.Item>
+
+              <Form.Item
+                name="nombre"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please input your password!",
+                  },
+                ]}
+              >
+                <Input placeholder="Nombre" />
+              </Form.Item>
+              <Form.Item
+                name="apellido"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please input your password!",
+                  },
+                ]}
+              >
+                <Input placeholder="Apellido" />
+              </Form.Item>
+              <Form.Item
+                name="edad"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please input your password!",
+                  },
+                ]}
+              >
+                <Input placeholder="Edad" />
               </Form.Item>
 
               <Form.Item
@@ -544,7 +697,7 @@ const Empleados = () => {
                         </Form.Item>
                         <Form.Item
                           {...restField}
-                          name={[name, "tipo"]}
+                          name={[name, "tipos_de_vehiculo"]}
                           rules={[
                             {
                               required: true,
@@ -582,23 +735,21 @@ const Empleados = () => {
                             })}
                           </Select>
                         </Form.Item>
-                        <Form.Item name="topvehiculo">
+                        <Form.Item name={[name, " topvehiculo"]} {...restField}>
                           <Select
                             placeholder="vehiculo"
                             style={{
                               width: 120,
                             }}
-                            options={[
-                              {
-                                value: "carro",
-                                label: "Carro",
-                              },
-                              {
-                                value: "moto",
-                                label: "Moto",
-                              },
-                            ]}
-                          />
+                          >
+                            {" "}
+                            <Option value="carro" key={1}>
+                              Carro
+                            </Option>
+                            <Option value="moto" key={2}>
+                              Moto
+                            </Option>
+                          </Select>
                         </Form.Item>
                         <MinusCircleOutlined onClick={() => remove(name)} />
                       </Space>

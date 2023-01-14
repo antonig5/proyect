@@ -30,7 +30,8 @@ const items = [
   ),
   getItem(<NavLink to="/">Salir</NavLink>, "3", <UserOutlined />),
   getItem(<NavLink to="/visitas">Visitas</NavLink>, "4", <TeamOutlined />),
-  getItem(<NavLink to="/empleados">Empleados</NavLink>, "9", <FileOutlined />),
+  getItem(<NavLink to="/empleados">Empleados</NavLink>, "5", <FileOutlined />),
+  getItem(<NavLink to="/reportes">Reportes</NavLink>, "6", <FileOutlined />),
 ];
 const Navbar = ({ children }) => {
   const [collapsed, setCollapsed] = useState(false);
