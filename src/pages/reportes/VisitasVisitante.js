@@ -21,7 +21,7 @@ const VisitasVisitante = () => {
   const datos = (value) => {
     if (value) {
       fetch(
-        `${Constants.URL}/api/visitas?populate=*&filters[$and][0][tipovisitante]=visitante&populate[0]=visitante.dependencia&filters[visitante][dependencia][dependencia]=${value}`
+        `${Constants.URL}/api/visitas?populate=*&populate[0]=visitante.dependencia&filters[visitante][dependencia][dependencia]=${value}`
       )
         .then((r) => r.json())
         .then((r) => {
@@ -47,7 +47,7 @@ const VisitasVisitante = () => {
   };
   const GetVisitantes = () => {
     fetch(
-      `${Constants.URL}/api/visitas?populate=*&filters[$and][0][tipovisitante]=visitante&populate[0]=visitante.dependencia`
+      `${Constants.URL}/api/visitas?populate=*&populate[0]=visitante.dependencia`
     )
       .then((r) => r.json())
       .then((r) => {
@@ -127,7 +127,7 @@ const VisitasVisitante = () => {
       fetch(
         `${
           Constants.URL
-        }/api/visitas?populate=*&filters[$and][0][tipovisitante]=visitante&filters[$and][0][entrada][$containsi]=${moment(
+        }/api/visitas?populate=*&filters[$and][0][entrada][$containsi]=${moment(
           new Date(value)
         ).format("YYYY-MM-DD")}`
       )
@@ -159,7 +159,7 @@ const VisitasVisitante = () => {
       fetch(
         `${
           Constants.URL
-        }/api/visitas?populate=*&filters[$and][0][tipovisitante]=visitante&filters[$and][0][salida][$containsi]=${moment(
+        }/api/visitas?populate=*&filters[$and][0][salida][$containsi]=${moment(
           new Date(value)
         ).format("YYYY-MM-DD")}`
       )
