@@ -20,8 +20,42 @@ const VisitasEmpleado = () => {
   const [data, setData] = useState([]);
   const [dependencia, setDependencia] = useState([]);
   const datos = (valor) => {
-    if (value == "trabajo") {
-      GetEmpleados();
+    console.log(valor);
+
+    if (valor) {
+      fetch(
+        `${Constants.URL}/api/ingreso-empleados?populate[0]=users_permissions_user.dependencia&filters[users_permissions_user][dependencia][dependencia]=${valor}`,
+        {
+          method: "GET",
+
+          headers: {
+            "content-type": "application/json",
+          },
+        }
+      )
+        .then((r) => r.json())
+        .then((r) => {
+          const user = [];
+          r.data.map((datos) => {
+            user.push({
+              id: datos.id,
+              estados: datos.attributes.estado,
+              entradas: datos.attributes.createdAt,
+              salidas: datos.attributes.updatedAt,
+              users:
+                datos.attributes.users_permissions_user.data.attributes.nombre,
+              documentos:
+                datos.attributes.users_permissions_user.data.attributes
+                  .documento,
+              dependencias:
+                datos.attributes.users_permissions_user.data.attributes
+                  .dependencia.data.attributes.dependencia,
+              // elementos: datos.elementos.data[0].attributes.nombre,
+            });
+          });
+
+          setData(user);
+        });
     }
   };
   const GetEmpleados = () => {
@@ -114,7 +148,7 @@ const VisitasEmpleado = () => {
       fetch(
         `${
           Constants.URL
-        }/api/visitas?populate=*&filters[$and][0][tipovisitante]=empleado&filters[$and][0][entrada][$containsi]=${moment(
+        }/api/ingreso-empleados?populate[0]=users_permissions_user.dependencia&filters[$and][0][createdAt][$containsi]=${moment(
           new Date(value)
         ).format("YYYY-MM-DD")}`
       )
@@ -124,12 +158,17 @@ const VisitasEmpleado = () => {
           res.data.map((datos) => {
             user.push({
               id: datos.id,
-              motivos: datos.attributes.motivo,
-              asuntos: datos.attributes.asunto,
-              entradas: datos.attributes.entrada,
-              salidas: datos.attributes.salida,
+              estados: datos.attributes.estado,
+              entradas: datos.attributes.createdAt,
+              salidas: datos.attributes.updatedAt,
               users:
                 datos.attributes.users_permissions_user.data.attributes.nombre,
+              documentos:
+                datos.attributes.users_permissions_user.data.attributes
+                  .documento,
+              dependencias:
+                datos.attributes.users_permissions_user.data.attributes
+                  .dependencia.data.attributes.dependencia,
               // elementos: datos.elementos.data[0].attributes.nombre,
             });
           });
@@ -146,7 +185,7 @@ const VisitasEmpleado = () => {
       fetch(
         `${
           Constants.URL
-        }/api/visitas?populate=*&filters[$and][0][tipovisitante]=empleado&filters[$and][0][salida][$containsi]=${moment(
+        }/api/ingreso-empleados?populate[0]=users_permissions_user.dependencia&filters[$and][0][createdAt][$containsi]=${moment(
           new Date(value)
         ).format("YYYY-MM-DD")}`
       )
@@ -156,12 +195,17 @@ const VisitasEmpleado = () => {
           res.data.map((datos) => {
             user.push({
               id: datos.id,
-              motivos: datos.attributes.motivo,
-              asuntos: datos.attributes.asunto,
-              entradas: datos.attributes.entrada,
-              salidas: datos.attributes.salida,
+              estados: datos.attributes.estado,
+              entradas: datos.attributes.createdAt,
+              salidas: datos.attributes.updatedAt,
               users:
                 datos.attributes.users_permissions_user.data.attributes.nombre,
+              documentos:
+                datos.attributes.users_permissions_user.data.attributes
+                  .documento,
+              dependencias:
+                datos.attributes.users_permissions_user.data.attributes
+                  .dependencia.data.attributes.dependencia,
               // elementos: datos.elementos.data[0].attributes.nombre,
             });
           });
