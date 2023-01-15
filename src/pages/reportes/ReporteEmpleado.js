@@ -7,6 +7,7 @@ import { NavLink } from "react-router-dom";
 const ReporteEmpleado = () => {
   const [data, setData] = useState([]);
   const [vehiculos, setVehiculos] = useState([]);
+  const [elementos, setElementos] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [ModalOpen, setModalOpen] = useState(false);
   const showModal = () => {
@@ -40,11 +41,23 @@ const ReporteEmpleado = () => {
         console.log(r);
       });
   };
-  const GetVehiculos = (id) => {
-    fetch(`${Constants.URL}/api/users/${id}?populate=*`)
+
+  const GetElementos = (id) => {
+    fetch(
+      `${Constants.URL}/api/elementos?populate=*&filters[$and][0][users][id]=${id}`
+    )
       .then((res) => res.json())
       .then((res) => {
-        setVehiculos(res.data);
+        setElementos(res);
+      });
+  };
+  const GetVehiculos = (id) => {
+    fetch(
+      `${Constants.URL}/api/users/${id}?populate=*&populate[0]=vehiculos.marca&populate[1]=vehiculos.tipos_de_vehiculo`
+    )
+      .then((res) => res.json())
+      .then((res) => {
+        setVehiculos(res.data.attributes.vehiculos);
       });
   };
   useEffect(() => {
@@ -85,6 +98,7 @@ const ReporteEmpleado = () => {
         <Space size="middle">
           <Button
             onClick={() => {
+              GetElementos(data.id);
               setIsModalOpen(true);
             }}
           >
@@ -128,13 +142,25 @@ const ReporteEmpleado = () => {
         open={isModalOpen}
         onOk={handleOk}
         onCancel={handleCancel}
-      ></Modal>
+      >
+        {" "}
+        {elementos.data.map((d) => {
+          return (
+            <ul>
+              {" "}
+              <li>{d.attributes.nombre} </li>{" "}
+            </ul>
+          );
+        })}
+      </Modal>
       <Modal
         title="Mis Vehiculos"
         open={ModalOpen}
         onOk={handleOk}
         onCancel={handleCancel}
-      ></Modal>
+      >
+        {vehiculos}
+      </Modal>
       <NavLink to="/reportes">
         <Button icon={<LeftOutlined />}>Regresar</Button>
       </NavLink>

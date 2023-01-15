@@ -25,6 +25,12 @@ const Reportes = () => {
       <NavLink to="/parqueaderoVisitante">
         <Button>Parqueaderos Vehiculos</Button>{" "}
       </NavLink>
+      <NavLink to="/listaEmpleado">
+        <Button>Lista de ingreso vehiculos empleados</Button>
+      </NavLink>
+      <NavLink to="/listaVisitante">
+        <Button>Lista de ingreso vehiculos Visitantes</Button>
+      </NavLink>
     </>
   );
 };

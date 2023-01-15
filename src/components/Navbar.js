@@ -18,16 +18,6 @@ function getItem(label, key, icon, children) {
   };
 }
 const items = [
-  getItem(
-    <NavLink to="/parqueadero">Parqueadero</NavLink>,
-    "1",
-    <PieChartOutlined />
-  ),
-  getItem(
-    <NavLink to="/vehiculos">vehiculos</NavLink>,
-    "2",
-    <DesktopOutlined />
-  ),
   getItem(<NavLink to="/">Salir</NavLink>, "3", <UserOutlined />),
   getItem(<NavLink to="/visitas">Visitas</NavLink>, "4", <TeamOutlined />),
   getItem(<NavLink to="/empleados">Empleados</NavLink>, "5", <FileOutlined />),
@@ -56,12 +46,20 @@ const Navbar = ({ children }) => {
             background: "rgba(255, 255, 255, 0.2)",
           }}
         />
-        <Menu
-          theme="dark"
-          defaultSelectedKeys={["1"]}
-          mode="inline"
-          items={items}
-        />
+        <Menu theme="dark" defaultSelectedKeys={["1"]} mode="inline">
+          <Menu.Item key={1} icon={<UserOutlined />}>
+            <NavLink to="/visitas">Visitas</NavLink>
+          </Menu.Item>
+          <Menu.Item key={2} icon={<UserOutlined />}>
+            <NavLink to="/empleados">Empleados</NavLink>
+          </Menu.Item>
+          <Menu.Item key={3} icon={<UserOutlined />}>
+            <NavLink to="/reportes">Reportes</NavLink>
+          </Menu.Item>
+          <Menu.Item key={4} icon={<UserOutlined />}>
+            <NavLink to="/">Salir</NavLink>
+          </Menu.Item>
+        </Menu>
       </Sider>
       <Layout className="site-layout">
         <Header

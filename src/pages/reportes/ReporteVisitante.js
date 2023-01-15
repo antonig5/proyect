@@ -149,13 +149,32 @@ const ReporteVisitante = () => {
         open={isModalOpen}
         onOk={handleOk}
         onCancel={handleCancel}
-      ></Modal>
+      >
+        {elementos.data.map((e) => {
+          return (
+            <ul>
+              {" "}
+              <li> {e.attributes.nombre}</li>{" "}
+            </ul>
+          );
+        })}
+      </Modal>
       <Modal
-        title="Mis Vehiculos"
+        title="Mi Vehiculo"
         open={ModalOpen}
         onOk={handleOk}
         onCancel={handleCancel}
-      ></Modal>
+      >
+        {vehiculos.data.map((e) => {
+          return (
+            <ul>
+              <li>Placa: {e.attributes.placa} </li>
+              <li>Marca: {e.attributes.marca.data.attributes.marca} </li>
+              <li>Tipo: {e.attributes.topvehiculo} </li>
+            </ul>
+          );
+        })}
+      </Modal>
       <NavLink to="/reportes">
         <Button icon={<LeftOutlined />}>Regresar</Button>
       </NavLink>
