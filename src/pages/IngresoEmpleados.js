@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
-import Constants from '../utils/Constants';
+import Constants from "../utils/Constants";
 import dayjs from "dayjs";
 import {
   Input,
@@ -21,174 +21,179 @@ const { Search } = Input;
 const { Option } = Select;
 const { confirm } = Modal;
 
-
-
 const IngresoEmpleados = () => {
-
-
+  // Estado para controlar si el modal de ingreso de visitantes está abierto o no
   const [isModalOpen, setIsModalOpen] = useState(false);
+  // Estado para almacenar los datos del visitante seleccionado
   const [datos, setDatos] = useState([]);
+  // Estado para almacenar las marcas de los vehículos
   const [marca, setMarca] = useState([]);
+  // Estado para almacenar los tipos de vehículos
   const [tipo, setTipo] = useState([]);
+  // Estado para controlar si el modal de ingreso de elementos está abierto o no
   const [ModalOpen, setModalOpen] = useState(false);
-  const [vehiculos, setVehiculos] = useState([])
+  // Estado para almacenar los vehículos del visitante seleccionado
+  const [vehiculos, setVehiculos] = useState([]);
+  // Estado para almacenar los elementos del visitante seleccionado
   const [elementos, setElementos] = useState([]);
+  // Estado para almacenar el motivo de entrada
   const [motivo, setMotivo] = useState("");
-  
 
+  // Función para ingresar un visitante
   const ingresarVisitante = (empleadoid, novedad, motivo) => {
+    // Muestra una ventana de confirmación antes de ingresar al visitante
 
+    console.log(novedad + "  " + motivo);
 
-          console.log(novedad+"  "+motivo);
+    confirm({
+      title: "Desea ingresar este visitante?",
 
-      confirm({
-        title: "Desea ingresar este visitante?",
-        
-      
-        onOk() {
-              fetch(`${Constants.URL}/api/ingreso-empleados`, {
-                method: "POST",
-                headers: {
-                  "content-type": "application/json",
-                },
-                body: JSON.stringify({
-                  data: {
-                    estado: "ingreso",
-                    users_permissions_user: {
-                      disconnect: [],
-                      connect: [{ id: datos.id }]
-                    },
-                    novedad: novedad,
-                    motivoentrada: motivo,
-                  },
-                }),
-              })
-                .then((res) => res.json())
-                .then((res) => {
-                  console.log(res);
-                  message.success("Ingresado Correctamente");
-                  onSearch(datos.id);
-                });
-        },
-        onCancel() {
-          console.log("Cancel");
-        },
-      });
- 
-    
-
-  }
-  
-
-   const ingresarElemento = (idvisita) => {
-     confirm({
-       title: "Desea ingresar este elemento?",
-
-       onOk() {
-         fetch(`${Constants.URL}/api/elementos/${idvisita}`, {
-           method: "PUT",
-           headers: {
-             "content-type": "application/json",
-           },
-           body: JSON.stringify({
-             data: {
-               estado: 1,
-             },
-           }),
-         })
-           .then((res) => res.json())
-           .then((res) => {
-             console.log(res);
-             message.success("Ingresado Correctamente");
-             onSearch(datos.id);
-           });
-       },
-       onCancel() {
-         console.log("Cancel");
-       },
-     });
-   };
-  
-   const salidaElemento = (ide) => {
-     confirm({
-       title: "Desea darle salida a este visitante?",
-
-       onOk() {
-         fetch(`${Constants.URL}/api/elementos/${ide}`, {
-           method: "PUT",
-           headers: {
-             "content-type": "application/json",
-           },
-           body: JSON.stringify({
-             data: {
-               estado: 2,
-             },
-           }),
-         })
-           .then((res) => res.json())
-           .then((res) => {
-             console.log(res);
-             message.success("El elemento Salio Correctamente");
-             onSearch(datos.id);
-           });
-       },
-       onCancel() {
-         console.log("Cancel");
-       },
-     });
-   };
-
-    const salidaVisitante = (idvisita, novedad, motivo) => {
-      confirm({
-        title: "Desea darle salida a este visitante?",
-        content: "Recuerde dar salida a objetos y vehiculos antes de dar salida al visitante",
-        onOk() {
-          fetch(`${Constants.URL}/api/ingreso-empleados/${idvisita}`, {
-            method: "PUT",
-            headers: {
-              "content-type": "application/json",
-            },
-            body: JSON.stringify({
-              data: {
-                estado: "salida",
-                novedad: novedad,
-                motivoentrada: motivo,
+      // Acción a realizar si se confirma el ingreso
+      onOk() {
+        // Realiza una petición POST a la ruta especificada en "Constants.URL" para ingresar al visitante
+        fetch(`${Constants.URL}/api/ingreso-empleados`, {
+          method: "POST",
+          headers: {
+            "content-type": "application/json",
+          },
+          body: JSON.stringify({
+            data: {
+              estado: "ingreso",
+              users_permissions_user: {
+                disconnect: [],
+                connect: [{ id: datos.id }],
               },
-            }),
-          })
-            .then((res) => res.json())
-            .then((res) => {
-              console.log(res);
-              message.success("El Visitante Salio Correctamente");
-              setDatos([]);
-            });
-        },
-        onCancel() {
-          console.log("Cancel");
-        },
+              novedad: novedad,
+              motivoentrada: motivo,
+            },
+          }),
+        })
+          .then((res) => res.json())
+          .then((res) => {
+            console.log(res);
+            // Muestra un mensaje de éxito
+            message.success("Ingresado Correctamente");
+            // Vuelve a buscar los datos del visitante
+            onSearch(datos.id);
+          });
+      },
+      onCancel() {
+        console.log("Cancel");
+      },
+    });
+  };
+
+  // Función para ingresar un elemento
+  const ingresarElemento = (idvisita) => {
+    // Muestra una ventana de confirmación antes de ingresar el elemento
+    confirm({
+      title: "Desea ingresar este elemento?",
+
+      onOk() {
+        fetch(`${Constants.URL}/api/elementos/${idvisita}`, {
+          method: "PUT",
+          headers: {
+            "content-type": "application/json",
+          },
+          body: JSON.stringify({
+            data: {
+              estado: 1,
+            },
+          }),
+        })
+          .then((res) => res.json())
+          .then((res) => {
+            console.log(res);
+            message.success("Ingresado Correctamente");
+            onSearch(datos.id);
+          });
+      },
+      onCancel() {
+        // Acción a realizar si se cancela el ingreso
+        console.log("Cancel");
+      },
+    });
+  };
+  // Función para dar salida a un elemento
+  const salidaElemento = (ide) => {
+    // Muestra una ventana de confirmación antes de dar salida al elemento
+    confirm({
+      title: "Desea darle salida a este visitante?",
+
+      onOk() {
+        fetch(`${Constants.URL}/api/elementos/${ide}`, {
+          method: "PUT",
+          headers: {
+            "content-type": "application/json",
+          },
+          body: JSON.stringify({
+            data: {
+              estado: 2,
+            },
+          }),
+        })
+          .then((res) => res.json())
+          .then((res) => {
+            console.log(res);
+            message.success("El elemento Salio Correctamente");
+            onSearch(datos.id);
+          });
+      },
+      onCancel() {
+        console.log("Cancel");
+      },
+    });
+  };
+
+  const salidaVisitante = (idvisita, novedad, motivo) => {
+    confirm({
+      title: "Desea darle salida a este visitante?",
+      content:
+        "Recuerde dar salida a objetos y vehiculos antes de dar salida al visitante",
+      onOk() {
+        fetch(`${Constants.URL}/api/ingreso-empleados/${idvisita}`, {
+          method: "PUT",
+          headers: {
+            "content-type": "application/json",
+          },
+          body: JSON.stringify({
+            data: {
+              estado: "salida",
+              novedad: novedad,
+              motivoentrada: motivo,
+            },
+          }),
+        })
+          .then((res) => res.json())
+          .then((res) => {
+            console.log(res);
+            message.success("El Visitante Salio Correctamente");
+            setDatos([]);
+          });
+      },
+      onCancel() {
+        console.log("Cancel");
+      },
+    });
+  };
+
+  const deleteVehiculo = (data) => {
+    console.log(data);
+
+    fetch(`${Constants.URL}/api/vehiculos/${data.idv}`, {
+      method: "DELETE",
+      headers: {
+        "content-type": "application/json",
+      },
+    })
+      .then((res) => res.json())
+      .then((res) => {
+        console.log(res);
+        onSearch(datos.id);
+        message.success("Vehiculo eliminado correctamente");
       });
-    };
+  };
 
-
-const deleteVehiculo = (data)=> {
-  console.log(data);
-
-      fetch(`${Constants.URL}/api/vehiculos/${data.idv}`, {
-        method: "DELETE",
-        headers: {
-          "content-type": "application/json",
-        },
-
-      })
-        .then((res) => res.json())
-        .then((res) => {
-          console.log(res);
-          onSearch(datos.id);
-          message.success("Vehiculo eliminado correctamente")
-        });
-}
-  
-  
   const deleteElemento = (data) => {
     console.log(data);
 
@@ -205,10 +210,10 @@ const deleteVehiculo = (data)=> {
         message.success("Elemento eliminado correctamente");
       });
   };
-  
+
   const ingresarVehiculo = (data) => {
     console.log(data);
-    if (data.topvehiculo=="moto") {
+    if (data.topvehiculo == "moto") {
     } else if (data.topvehiculo == "carro") {
       fetch(
         `${Constants.URL}/api/parqueaderos?filters[id][$gt]=2&filters[id][$lte]=35&filters[estado][$eq]=false&pagination[limit]=100`,
@@ -223,7 +228,7 @@ const deleteVehiculo = (data)=> {
         .then((res) => {
           console.log("ingreso");
           //agregar ingreso
-          
+
           fetch(
             `${Constants.URL}/api/ingresovehiculos?populate[0]=parqueadero`,
             {
@@ -271,25 +276,26 @@ const deleteVehiculo = (data)=> {
             });
         });
     }
-    
   };
-  
-    const salidaVehiculo = (data) => {
-          console.log(data);
-      fetch(`${Constants.URL}/api/vehiculos/${data.idv}?populate[0]=ingresovehiculos.parqueadero`, {
+
+  const salidaVehiculo = (data) => {
+    console.log(data);
+    fetch(
+      `${Constants.URL}/api/vehiculos/${data.idv}?populate[0]=ingresovehiculos.parqueadero`,
+      {
         method: "GET",
         headers: {
           "content-type": "application/json",
         },
-    
-      }).then((res) => res.json())
-        .then((res) => {
-          const ingresos = res.data.attributes.ingresovehiculos.data
-          ingresos.map((ingreso) => {
-            console.log(ingreso.id);
+      }
+    )
+      .then((res) => res.json())
+      .then((res) => {
+        const ingresos = res.data.attributes.ingresovehiculos.data;
+        ingresos.map((ingreso) => {
+          console.log(ingreso.id);
 
-            if (ingreso.attributes.estado ==1) {
-              
+          if (ingreso.attributes.estado == 1) {
             fetch(`${Constants.URL}/api/ingresovehiculos/${ingreso.id}`, {
               method: "PUT",
               headers: {
@@ -300,99 +306,96 @@ const deleteVehiculo = (data)=> {
                   estado: 2,
                 },
               }),
-            }).then((res) => res.json())
+            })
+              .then((res) => res.json())
               .then((res) => {
                 console.log(res);
                 //liberar parqueadero
-                     fetch(
-                       `${Constants.URL}/api/parqueaderos/${ingreso.attributes.parqueadero.data.id}`,
-                       {
-                         method: "PUT",
-                         headers: {
-                           "content-type": "application/json",
-                         },
-                         body: JSON.stringify({
-                           data: {
-                             estado: false,
-                           },
-                         }),
-                       }
-                     )
-                       .then((res) => res.json())
-                       .then((res) => {
-                         console.log(res);
-message.success("el Vehiculo a salido con exito")
-                         onSearch(datos.id);
-                       });
+                fetch(
+                  `${Constants.URL}/api/parqueaderos/${ingreso.attributes.parqueadero.data.id}`,
+                  {
+                    method: "PUT",
+                    headers: {
+                      "content-type": "application/json",
+                    },
+                    body: JSON.stringify({
+                      data: {
+                        estado: false,
+                      },
+                    }),
+                  }
+                )
+                  .then((res) => res.json())
+                  .then((res) => {
+                    console.log(res);
+                    message.success("el Vehiculo a salido con exito");
+                    onSearch(datos.id);
+                  });
               });
-            }
-
-          })
-
+          }
         });
-    };
-  
-    const columnselementos = [
-      {
-        title: "ID",
-        dataIndex: "ide",
-        key: "ide",
-        render: (text) => <p>{text}</p>,
-      },
-      {
-        title: "Estado",
-        dataIndex: "estado",
-        key: "estado",
-        render: (text) => <p>{text}</p>,
-      },
-      {
-        title: "Nombre",
-        dataIndex: "nombre",
-        key: "nombre",
-        render: (text) => <a>{text}</a>,
-      },
+      });
+  };
 
-      {
-        title: "Action",
-        key: "action",
-        render: (_, record) => (
-          <Space size="middle">
-            {console.log(record)}
-            {record.estadoe == 1 ? (
-              <Button
-                onClick={() => {
-                  salidaElemento(record.ide);
-                }}
-              >
-                {" "}
-                Salir
-              </Button>
-            ) : (
-              <Button
-                onClick={() => {
-                  ingresarElemento(record.ide);
-                }}
-              >
-                {" "}
-                Ingresar
-              </Button>
-            )}
+  const columnselementos = [
+    {
+      title: "ID",
+      dataIndex: "ide",
+      key: "ide",
+      render: (text) => <p>{text}</p>,
+    },
+    {
+      title: "Estado",
+      dataIndex: "estado",
+      key: "estado",
+      render: (text) => <p>{text}</p>,
+    },
+    {
+      title: "Nombre",
+      dataIndex: "nombre",
+      key: "nombre",
+      render: (text) => <a>{text}</a>,
+    },
 
+    {
+      title: "Action",
+      key: "action",
+      render: (_, record) => (
+        <Space size="middle">
+          {console.log(record)}
+          {record.estadoe == 1 ? (
             <Button
               onClick={() => {
-                deleteElemento(record);
+                salidaElemento(record.ide);
               }}
             >
               {" "}
-              Eliminar
+              Salir
             </Button>
-          </Space>
-        ),
-      },
-    ];
-  
-  
-  
+          ) : (
+            <Button
+              onClick={() => {
+                ingresarElemento(record.ide);
+              }}
+            >
+              {" "}
+              Ingresar
+            </Button>
+          )}
+
+          <Button
+            onClick={() => {
+              deleteElemento(record);
+            }}
+          >
+            {" "}
+            Eliminar
+          </Button>
+        </Space>
+      ),
+    },
+  ];
+
   const columns = [
     {
       title: "ID",
@@ -424,7 +427,7 @@ message.success("el Vehiculo a salido con exito")
       key: "action",
       render: (_, record) => (
         <Space size="middle">
-         { console.log(record)}
+          {console.log(record)}
           {record.estadob == 1 ? (
             <Button
               onClick={() => {
@@ -466,10 +469,9 @@ message.success("el Vehiculo a salido con exito")
   };
   const handleCancel = () => {
     setIsModalOpen(false);
-setModalOpen(false);
+    setModalOpen(false);
   };
 
- 
   const showModall = () => {
     setModalOpen(true);
   };
@@ -493,7 +495,9 @@ setModalOpen(false);
       });
   };
   //http://192.168.0.113:1337/api/global?populate[0]=footer.logo&populate[1]=footer.columns.links
+  // Función para buscar un visitante
   const onSearch = (value) => {
+    // Realiza una petición GET a la ruta especificada en "Constants.URL" para buscar el visitante
     fetch(
       `${Constants.URL}/api/users/${value}?populate[0]=vehiculos.ingresovehiculos.parqueadero&populate[1]=elementos&populate[2]=ingreso_empleados&populate[3]=horario&populate[4]=dependencia`
     )
@@ -503,13 +507,12 @@ setModalOpen(false);
         console.log("busqueda");
         const d = res.ingreso_empleados.filter((el) => el.estado === "ingreso");
         console.log("prueba idvisita");
-        
+
         if (d.length > 0) {
           res.estadovisita = 1;
-          res.idvisita = d[0].id
+          res.idvisita = d[0].id;
         } else {
           res.estadovisita = 0;
-          
         }
 
         const array = [];
@@ -564,111 +567,93 @@ setModalOpen(false);
   };
 
   const crearElementos = (element) => {
-
-
-
     fetch(`${Constants.URL}/api/elementos`, {
       method: "POST",
       headers: {
         "content-type": "application/json",
       },
       body: JSON.stringify({
-       data:{nombre: element.nombre} 
-      })
-    }).then((res) => res.json())
-      .then((res) => {
-        
-console.log(res);
-    fetch(
-      `${Constants.URL}/api/users/${datos.id}?populate=*`,
-      {
-        method: "PUT",
-        headers: {
-          "content-type": "application/json",
-        },
-        body: JSON.stringify({
-         
-            elementos: {
-              connect: [{id: res.data.id}]
-            },
-          
-        }),
-      }
-    )
+        data: { nombre: element.nombre },
+      }),
+    })
       .then((res) => res.json())
       .then((res) => {
         console.log(res);
-        onSearch(datos.id)
-      });
-      })
-
-
-
-
-  };
-
-  const EstadoSubmit = (data) => {
-
- 
-        console.log(datos.id);
-        fetch(`${Constants.URL}/api/vehiculos`, {
-          method: "POST",
+        fetch(`${Constants.URL}/api/users/${datos.id}?populate=*`, {
+          method: "PUT",
           headers: {
             "content-type": "application/json",
           },
           body: JSON.stringify({
-            data: {
-              placa: data.placa,
-              marca: data.marca,
-              tipos_de_vehiculo: data.tipo,
-              topvehiculo: data.topvehiculo,
+            elementos: {
+              connect: [{ id: res.data.id }],
             },
           }),
         })
-          .then((respon) => respon.json())
-          .then((respon) => {
-            console.log(respon.data.id);
-            if (respon.data == null) {
-              console.log("weeee");
-              message.error("Error al crear vehiculo valide los datos e intente de nuevo")
-            } else {
-
-               fetch(`${Constants.URL}/api/users/${datos.id}?populate=*`, {
-                 method: "PUT",
-                 headers: {
-                   "content-type": "application/json",
-                 },
-                 body: JSON.stringify({
-                   
-                     vehiculos: {
-                       connect: [{ id: respon.data.id }],
-                     },
-                   
-                 }),
-               })
-                 .then((res) => res.json())
-                 .then((res) => {
-                   console.log(res);
-                   if (res.data !== null) {
-                     onSearch(datos.id);
-                     message.success(
-                       "Vehiculo creado y asignado correctamente"
-                     );
-                   } else {
-                     message.success("no fue posible asignar el vehiculo");
-                   }
-                 })
-                 .catch((err) => {
-                   console.log(err);
-                 });
-            }
-           
-          }).catch((err) => {
-             message.error(
-               "Error al crear vehiculo valide los datos e intente de nuevo"
-             );
+          .then((res) => res.json())
+          .then((res) => {
+            console.log(res);
+            onSearch(datos.id);
           });
-      
+      });
+  };
+
+  const EstadoSubmit = (data) => {
+    console.log(datos.id);
+    fetch(`${Constants.URL}/api/vehiculos`, {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+      },
+      body: JSON.stringify({
+        data: {
+          placa: data.placa,
+          marca: data.marca,
+          tipos_de_vehiculo: data.tipo,
+          topvehiculo: data.topvehiculo,
+        },
+      }),
+    })
+      .then((respon) => respon.json())
+      .then((respon) => {
+        console.log(respon.data.id);
+        if (respon.data == null) {
+          console.log("weeee");
+          message.error(
+            "Error al crear vehiculo valide los datos e intente de nuevo"
+          );
+        } else {
+          fetch(`${Constants.URL}/api/users/${datos.id}?populate=*`, {
+            method: "PUT",
+            headers: {
+              "content-type": "application/json",
+            },
+            body: JSON.stringify({
+              vehiculos: {
+                connect: [{ id: respon.data.id }],
+              },
+            }),
+          })
+            .then((res) => res.json())
+            .then((res) => {
+              console.log(res);
+              if (res.data !== null) {
+                onSearch(datos.id);
+                message.success("Vehiculo creado y asignado correctamente");
+              } else {
+                message.success("no fue posible asignar el vehiculo");
+              }
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+        }
+      })
+      .catch((err) => {
+        message.error(
+          "Error al crear vehiculo valide los datos e intente de nuevo"
+        );
+      });
   };
 
   useEffect(() => {
@@ -676,15 +661,9 @@ console.log(res);
     GetTipo();
   }, []);
 
-
-
-
-
-  
-
-
   return (
     <>
+      {/* Componente para buscar un visitante */}
       <Search
         placeholder="input search text"
         allowClear
@@ -698,7 +677,6 @@ console.log(res);
         <>
           <Button onClick={showModal}>Agregar elementos</Button>
           <Button onClick={showModall}>ingresar vehiculos</Button>
-         
         </>
       ) : null}
 
@@ -951,6 +929,7 @@ console.log(res);
             </Button>
           </Form.Item>
         </Form>
+        {/* Tabla para mostrar los vehículos del visitante */}
         <Table columns={columnselementos} dataSource={elementos} />
       </Modal>
     </>

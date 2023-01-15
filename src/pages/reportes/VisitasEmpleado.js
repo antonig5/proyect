@@ -22,7 +22,7 @@ const VisitasEmpleado = () => {
   const [dependencia, setDependencia] = useState([]);
   const datos = (valor) => {
     console.log(valor);
-
+    //filtro por dependencia
     if (valor) {
       fetch(
         `${Constants.URL}/api/ingreso-empleados?populate[0]=users_permissions_user.dependencia&filters[users_permissions_user][dependencia][dependencia]=${valor}`,
@@ -59,6 +59,7 @@ const VisitasEmpleado = () => {
         });
     }
   };
+  //peticion para llenar tabla visitas de empleados
   const GetEmpleados = () => {
     fetch(
       `${Constants.URL}/api/ingreso-empleados?populate=*&populate[0]=users_permissions_user.dependencia`
@@ -87,7 +88,7 @@ const VisitasEmpleado = () => {
         setData(user);
       });
   };
-
+  //peticion dependencias
   const Getdependencia = () => {
     fetch(`${Constants.URL}/api/dependencias`)
       .then((r) => r.json())
@@ -102,16 +103,16 @@ const VisitasEmpleado = () => {
     GetEmpleados();
   }, []);
 
-   const headers = [
-     { label: "ID", key: "id" },
-     { label: "Documento", key: "documentos" },
-     { label: "Empleados", key: "users" },
-     { label: "Estado", key: "estados" },
-     { label: "Dependencia", key: "dependencias" },
-     { label: "Fecha entrada", key: "entradas" },
-     { label: "Fecha salida", key: "entradas" },
-   ];
-
+  const headers = [
+    { label: "ID", key: "id" },
+    { label: "Documento", key: "documentos" },
+    { label: "Empleados", key: "users" },
+    { label: "Estado", key: "estados" },
+    { label: "Dependencia", key: "dependencias" },
+    { label: "Fecha entrada", key: "entradas" },
+    { label: "Fecha salida", key: "entradas" },
+  ];
+  ///columnas
   const columns = [
     {
       title: "ID",
@@ -151,7 +152,7 @@ const VisitasEmpleado = () => {
       key: "salidas",
     },
   ];
-
+  ///filtro de fechas entrada
   const onSearch = (value) => {
     if (value == null) {
       GetEmpleados();
@@ -188,7 +189,7 @@ const VisitasEmpleado = () => {
         });
     }
   };
-
+  ///filtro de fechas salida
   const onSearchExit = (value) => {
     if (value == null) {
       GetEmpleados();
@@ -228,6 +229,7 @@ const VisitasEmpleado = () => {
 
   return (
     <>
+      {/*filtros por fechas y tabla de visitas empleados */}
       <NavLink to="/reportes">
         <Button icon={<LeftOutlined />}>Regresar</Button>
       </NavLink>

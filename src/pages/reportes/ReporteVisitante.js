@@ -5,6 +5,7 @@ import { LeftOutlined } from "@ant-design/icons";
 import { NavLink } from "react-router-dom";
 import { CSVLink } from "react-csv";
 const ReporteVisitante = () => {
+  //variable de datos
   const [data, setData] = useState([]);
   const [elementos, setElementos] = useState([]);
   const [vehiculos, setVehiculos] = useState([]);
@@ -20,7 +21,7 @@ const ReporteVisitante = () => {
   const handleCancel = () => {
     setIsModalOpen(false);
     setModalOpen(false);
-  };
+  }; ///peticion que llena la tabla
   const GetEmpleados = () => {
     fetch(
       `${Constants.URL}/api/visitantes?populate=*&filters[$and][0][dependencia][id]=2`
@@ -39,11 +40,11 @@ const ReporteVisitante = () => {
 
             // elementos: datos.elementos.data[0].attributes.nombre,
           });
-        });
+        }); ///actualizacion de la variable
         setData(dependencia);
       });
   };
-
+  ////traer elementos de empleado
   const GetElementos = (id) => {
     fetch(
       `${Constants.URL}/api/elementos?populate=*&filters[$and][0][visitantes][id]=${id}`
@@ -53,7 +54,7 @@ const ReporteVisitante = () => {
         setElementos(res.data);
       });
   };
-
+  //traer vehiculos de empleado
   const GetVehiculos = (id) => {
     fetch(
       `${Constants.URL}/api/visitantes/${id}?populate=*&populate[0]=vehiculos.marca&populate[1]=vehiculos.tipos_de_vehiculo`
@@ -68,15 +69,14 @@ const ReporteVisitante = () => {
     GetEmpleados();
   }, []);
 
-     const headers = [
-       { label: "ID", key: "id" },
-       { label: "Nombre", key: "nombres" },
-       { label: "Apellido", key: "apellidos" },
-       { label: "Documento", key: "documentos" },
-       { label: "Dependencia", key: "dependencias" },
-     
-     ];
-
+  const headers = [
+    { label: "ID", key: "id" },
+    { label: "Nombre", key: "nombres" },
+    { label: "Apellido", key: "apellidos" },
+    { label: "Documento", key: "documentos" },
+    { label: "Dependencia", key: "dependencias" },
+  ];
+  //columnas
   const columns = [
     {
       title: "ID",
@@ -128,7 +128,7 @@ const ReporteVisitante = () => {
         </Space>
       ),
     },
-  ];
+  ]; //filtro por nombre
   const onSearch = (value) => {
     fetch(
       `${Constants.URL}/api/visitantes?populate=*&filters[$and][0][nombre][$contains]=${value.target.value}&filters[$and][0][dependencia][id]=2`
@@ -153,6 +153,7 @@ const ReporteVisitante = () => {
   };
   return (
     <>
+      {/* Tabla de emplados y ventana para elementos y vehiculos */}
       <Modal
         title="Mis Elementos"
         open={isModalOpen}
@@ -189,7 +190,7 @@ const ReporteVisitante = () => {
       </NavLink>
 
       <Input
-        style={{width: "400px"}}
+        style={{ width: "400px" }}
         onChange={onSearch}
         showCount
         placeholder="Buscar por nombre de Visitante"

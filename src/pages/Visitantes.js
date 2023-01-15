@@ -16,9 +16,11 @@ import {
   Select,
   Col,
 } from "antd";
+//importacion de react y and
 const { Option } = Select;
 const { RangePicker } = DatePicker;
 const Visitantes = () => {
+  //estado para llenar la tabla visitantes
   const [data, setData] = useState([]);
   const [dependencias, setDependencia] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -28,6 +30,7 @@ const Visitantes = () => {
   const handleOk = () => {
     setIsModalOpen(false);
   };
+  ///peticion que llena la tabla
   const onFinish = (data) => {
     fetch(`${Constants.URL}/api/visitantes`, {
       method: "POST",
@@ -71,7 +74,7 @@ const Visitantes = () => {
         }
       });
   };
-
+  ///control de fechas a la hora de crear la visita
   const disabledDate = (current) => {
     // Can not select days before today and today
     return current && current < dayjs().add(23.9, "hour");
@@ -87,7 +90,7 @@ const Visitantes = () => {
       document.getElementById("a").appendChild(img);
     });
   }
-
+  ///dependencia de la visita
   const getDependencias = (ev) => {
     if (ev == null) {
       setDependencia([]);
@@ -112,6 +115,7 @@ const Visitantes = () => {
 
   return (
     <>
+      {/* Formulario para que el visitante haga la visita */}
       <Form name="register" onFinish={onFinish}>
         <Form.Item
           name="documento"
@@ -126,8 +130,6 @@ const Visitantes = () => {
             },
             {
               required: true,
-
-              message: "Se requiere un documento!",
             },
           ]}
         >
@@ -144,7 +146,6 @@ const Visitantes = () => {
           rules={[
             {
               required: true,
-              message: "Please input your nickname!",
             },
           ]}
         >
@@ -155,7 +156,6 @@ const Visitantes = () => {
           rules={[
             {
               required: true,
-              message: "Please input your nickname!",
             },
           ]}
         >
@@ -167,7 +167,6 @@ const Visitantes = () => {
           rules={[
             {
               required: true,
-              message: "Please input your nickname!",
             },
           ]}
         >
@@ -184,7 +183,6 @@ const Visitantes = () => {
           rules={[
             {
               required: true,
-              message: "Please input your nickname!",
             },
           ]}
         >
@@ -196,11 +194,10 @@ const Visitantes = () => {
           rules={[
             {
               type: "email",
-              message: "The input is not valid E-mail!",
+              message: " is not valid E-mail!",
             },
             {
               required: true,
-              message: "Please input your E-mail!",
             },
           ]}
         >

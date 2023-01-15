@@ -4,6 +4,10 @@ import Constants from "../utils/Constants";
 import { NavLink } from "react-router-dom";
 
 const Reportes = () => {
+  // El componente Reportes es una vista que muestra una serie de botones que redirigen a diferentes rutas.
+  // Cada botón tiene una etiqueta que indica a qué vista redirige.
+  // El componente utiliza el componente NavLink de react-router-dom para navegar entre las diferentes vistas.
+  // El componente utiliza el componente Button de antd para mostrar los botones de navegación.
   return (
     <>
       <NavLink to="/reportesEmpleado">

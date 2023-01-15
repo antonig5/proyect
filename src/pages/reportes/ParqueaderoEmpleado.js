@@ -1,12 +1,23 @@
 import React, { useEffect, useState } from "react";
-import { Button, Input, Space, Table, Tabs, Tag, Modal, Select, Typography } from "antd";
+import {
+  Button,
+  Input,
+  Space,
+  Table,
+  Tabs,
+  Tag,
+  Modal,
+  Select,
+  Typography,
+} from "antd";
 import Constants from "../../utils/Constants";
 import { LeftOutlined } from "@ant-design/icons";
 import { CSVLink, CSVDownload } from "react-csv";
 import { NavLink } from "react-router-dom";
 const { Option } = Select;
-const {Title} = Typography
+const { Title } = Typography;
 const ParqueaderoEmpleado = () => {
+  //variable para actualizar y almacenar los datos
   const [data, setData] = useState([]);
   const [vehiculos, setVehiculos] = useState([]);
 
@@ -18,19 +29,19 @@ const ParqueaderoEmpleado = () => {
   const handleCancel = () => {
     setModalOpen(false);
   };
-
+  //peticion que llena la tabala empleados
   const GetEmpleados = (ev) => {
-      let inicio = 0;
-      let final = 30;
+    let inicio = 0;
+    let final = 30;
 
-      if (ev === "empleados") {
-        inicio = 0;
-        final = 35;
-      } else if (ev === "visitantes") {
-        inicio = 30;
-        final = 40;
-      }
-  
+    if (ev === "empleados") {
+      inicio = 0;
+      final = 35;
+    } else if (ev === "visitantes") {
+      inicio = 30;
+      final = 40;
+    }
+
     fetch(
       `${Constants.URL}/api/parqueaderomotos?pagination[start]=${inicio}&pagination[limit]=${final}&populate=*&populate[0]=ingresovehiculos.vehiculo`
     )
@@ -53,7 +64,7 @@ const ParqueaderoEmpleado = () => {
         setData(user);
       });
   };
-
+  ///peticion para traer vehiculos
   const GetVehiculos = (id) => {
     fetch(
       `${Constants.URL}/api/parqueaderomotos/${id}?populate=*&populate[0]=ingresovehiculos.vehiculo`
@@ -67,13 +78,13 @@ const ParqueaderoEmpleado = () => {
   useEffect(() => {
     GetEmpleados();
   }, []);
-
-   const headers = [
-     { label: "Paqueadero", key: "seccion" },
-     { label: "Fecha Entrada", key: "entrada" },
-     { label: "Fecha Salida", key: "salida" },
-   ];
-
+  //filtro para parqueadero
+  const headers = [
+    { label: "Paqueadero", key: "seccion" },
+    { label: "Fecha Entrada", key: "entrada" },
+    { label: "Fecha Salida", key: "salida" },
+  ];
+  // columnas
   const columns = [
     {
       title: "Seccion",
@@ -116,6 +127,7 @@ const ParqueaderoEmpleado = () => {
   };
   return (
     <>
+      {/* select para filtrar y tabla de parqueaderos de empleados */}
       <Title level={3}>Parqueaderos Motos</Title>
       <Modal
         title="Mis Vehiculos"

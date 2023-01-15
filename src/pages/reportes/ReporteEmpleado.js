@@ -5,6 +5,7 @@ import { LeftOutlined } from "@ant-design/icons";
 import { NavLink } from "react-router-dom";
 import { CSVLink } from "react-csv";
 const ReporteEmpleado = () => {
+  //variable de datos
   const [data, setData] = useState([]);
   const [vehiculos, setVehiculos] = useState([]);
   const [elementos, setElementos] = useState([]);
@@ -21,6 +22,7 @@ const ReporteEmpleado = () => {
     setIsModalOpen(false);
     setModalOpen(false);
   };
+  ///peticion que llena la tabla
   const GetEmpleados = () => {
     fetch(
       `${Constants.URL}/api/users?populate=*&filters[$and][0][dependencia][id]=2`
@@ -37,11 +39,12 @@ const ReporteEmpleado = () => {
             dependencias: datos.dependencia.dependencia,
           });
         });
+        ///actualizacion de la variable
         setData(dependencia);
         console.log(r);
       });
   };
-
+  ////traer elementos de empleado
   const GetElementos = (id) => {
     fetch(
       `${Constants.URL}/api/elementos?populate=*&filters[$and][0][users][id]=${id}`
@@ -51,6 +54,7 @@ const ReporteEmpleado = () => {
         setElementos(res.data);
       });
   };
+  //traer vehiculos de empleado
   const GetVehiculos = (id) => {
     fetch(
       `${Constants.URL}/api/users/${id}?populate=*&populate[0]=vehiculos.marca&populate[1]=vehiculos.tipos_de_vehiculo`
@@ -64,15 +68,15 @@ const ReporteEmpleado = () => {
     GetEmpleados();
   }, []);
 
-   const headers = [
-     { label: "ID", key: "id" },
-     { label: "Nombre", key: "nombres" },
-     { label: "Apellido", key: "apellidos" },
-     { label: "Documento", key: "documentos" },
-     { label: "Dependencia", key: "dependencias" },
-   ];
+  const headers = [
+    { label: "ID", key: "id" },
+    { label: "Nombre", key: "nombres" },
+    { label: "Apellido", key: "apellidos" },
+    { label: "Documento", key: "documentos" },
+    { label: "Dependencia", key: "dependencias" },
+  ];
 
-
+  //columnas
   const columns = [
     {
       title: "ID",
@@ -124,7 +128,7 @@ const ReporteEmpleado = () => {
         </Space>
       ),
     },
-  ];
+  ]; //filtro por nombre
   const onSearch = (value) => {
     fetch(
       `${Constants.URL}/api/users?populate=*&filters[$and][0][nombre][$contains]=${value.target.value}&filters[$and][0][dependencia][id]=2`
@@ -146,6 +150,7 @@ const ReporteEmpleado = () => {
   };
   return (
     <>
+      {/* Tabla de emplados y ventana para elementos y vehiculos */}
       <Modal
         title="Mis Elementos"
         open={isModalOpen}

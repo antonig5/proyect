@@ -18,7 +18,7 @@ const { Option } = Select;
 const VisitasVisitante = () => {
   const [data, setData] = useState([]);
   const [dependencia, setDependencia] = useState([]);
-
+  //filtro por dependencia
   const datos = (value) => {
     if (value) {
       fetch(
@@ -45,7 +45,7 @@ const VisitasVisitante = () => {
           setData(user);
         });
     }
-  };
+  }; //peticion para llenar tabla visitas de empleados
   const GetVisitantes = () => {
     fetch(
       `${Constants.URL}/api/visitas?populate=*&populate[0]=visitante.dependencia`
@@ -71,7 +71,7 @@ const VisitasVisitante = () => {
 
         setData(user);
       });
-  };
+  }; //peticion dependencias
   const Getdependencia = () => {
     fetch(`${Constants.URL}/api/dependencias`)
       .then((r) => r.json())
@@ -84,17 +84,16 @@ const VisitasVisitante = () => {
     GetVisitantes();
   }, []);
 
-
-   const headers = [
-     { label: "ID", key: "id" },
-     { label: "Documento", key: "documentos" },
-     { label: "Empleados", key: "users" },
-     { label: "Estado", key: "estados" },
-     { label: "Dependencia", key: "dependencias" },
-     { label: "Fecha entrada", key: "entradas" },
-     { label: "Fecha salida", key: "entradas" },
-   ];
-
+  const headers = [
+    { label: "ID", key: "id" },
+    { label: "Documento", key: "documentos" },
+    { label: "Empleados", key: "users" },
+    { label: "Estado", key: "estados" },
+    { label: "Dependencia", key: "dependencias" },
+    { label: "Fecha entrada", key: "entradas" },
+    { label: "Fecha salida", key: "entradas" },
+  ];
+  ///columnas
   const columns = [
     {
       title: "ID",
@@ -131,7 +130,7 @@ const VisitasVisitante = () => {
       dataIndex: "salidas",
       key: "salidas",
     },
-  ];
+  ]; ///filtro de fechas entrada
   const onSearch = (value) => {
     if (value == null) {
       GetVisitantes();
@@ -162,7 +161,7 @@ const VisitasVisitante = () => {
         });
     }
   };
-
+  ///filtro de fechas salida
   const onSearchExit = (value) => {
     console.log(value);
     if (value == null) {
@@ -196,6 +195,7 @@ const VisitasVisitante = () => {
   };
   return (
     <>
+      {/*filtros por fechas y tabla de visitas empleados */}
       <NavLink to="/reportes">
         <Button icon={<LeftOutlined />}>Regresar</Button>
       </NavLink>
