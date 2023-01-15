@@ -359,7 +359,6 @@ const Empleados = () => {
                 rules={[
                   {
                     required: true,
-                    message: "Please input the title of collection!",
                   },
                 ]}
               >
@@ -371,7 +370,6 @@ const Empleados = () => {
                 rules={[
                   {
                     required: true,
-                    message: "Please input the title of collection!",
                   },
                 ]}
               >
@@ -383,7 +381,6 @@ const Empleados = () => {
                 rules={[
                   {
                     required: true,
-                    message: "Please input the title of collection!",
                   },
                 ]}
               >
@@ -395,7 +392,6 @@ const Empleados = () => {
                 rules={[
                   {
                     required: true,
-                    message: "Please input the title of collection!",
                   },
                 ]}
               >
@@ -407,7 +403,6 @@ const Empleados = () => {
                 rules={[
                   {
                     required: true,
-                    message: "Please input the title of collection!",
                   },
                 ]}
               >
@@ -433,7 +428,6 @@ const Empleados = () => {
                           rules={[
                             {
                               required: true,
-                              message: "Missing first name",
                             },
                           ]}
                         >
@@ -445,7 +439,6 @@ const Empleados = () => {
                           rules={[
                             {
                               required: true,
-                              message: "Missing last name",
                             },
                           ]}
                         >
@@ -465,7 +458,6 @@ const Empleados = () => {
                           rules={[
                             {
                               required: true,
-                              message: "Missing last name",
                             },
                           ]}
                         >

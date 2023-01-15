@@ -1,6 +1,6 @@
 import React from "react";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
-import { Button, Checkbox, Col, Form, Input, Row } from "antd";
+import { Button, Checkbox, Col, Form, Image, Input, Row } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { setUser } from "../redux/actions";
 import Constants from "../utils/Constants";
@@ -32,6 +32,7 @@ const Login = () => {
       <Row>
         <Col span={12}>
           <Form
+            style={{ marginLeft: 100, marginTop: 200 }}
             name="normal_login"
             className="login-form"
             initialValues={{
@@ -51,6 +52,7 @@ const Login = () => {
               <Input
                 prefix={<UserOutlined className="site-form-item-icon" />}
                 placeholder="E-mail"
+                style={{ width: 300 }}
               />
             </Form.Item>
             <Form.Item
@@ -64,6 +66,7 @@ const Login = () => {
               <Input.Password
                 prefix={<LockOutlined className="site-form-item-icon" />}
                 placeholder="Password"
+                style={{ width: 300 }}
               />
             </Form.Item>
             <Form.Item>
@@ -84,7 +87,12 @@ const Login = () => {
           </Form>
         </Col>
 
-        <Col span={12}></Col>
+        <Col span={12}>
+          <Image
+            src="https://cdn.pixabay.com/photo/2015/04/28/19/34/ink-744224_960_720.jpg"
+            style={{ width: "100%" }}
+          />
+        </Col>
       </Row>
     </>
   );
