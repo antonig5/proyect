@@ -7,6 +7,11 @@ import Constants from "../utils/Constants";
 import Visitantes from "./Visitantes";
 
 const Login = () => {
+  // El componente cuenta con una función 'onFinish' que se ejecuta al presionar el botón de iniciar sesión, esta función se encarga de hacer la petición POST y actualizar el estado del usuario con la respuesta.
+  // El formulario cuenta con validaciones para que el campo de correo sea un correo válido y el campo de contraseña no sea vacío.
+  // El componente también cuenta con una función 'onFinish' que se ejecuta al presionar el botón de iniciar sesión, esta función se encarga de hacer la petición POST y actualizar el estado del usuario con la respuesta.
+  // El formulario cuenta con validaciones para que el campo de correo sea un correo válido y el campo de contraseña no sea vacío.
+  // En la parte derecha de la pantalla se muestra una imagen que ilustra el login.
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user);
   const onFinish = (data) => {
