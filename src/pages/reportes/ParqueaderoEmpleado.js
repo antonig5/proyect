@@ -17,9 +17,8 @@ import { useSelector } from "react-redux";
 import { NavLink } from "react-router-dom";
 const { Option } = Select;
 const { Title } = Typography;
-const ParqueaderoEmpleado = () => {
-  //variable para actualizar y almacenar los datos
-const { Title } = Typography
+
+//variable para actualizar y almacenar los datos
 
 const ParqueaderoEmpleado = () => {
   //variable para actualizar y almacenar los datos
@@ -165,4 +164,4 @@ const ParqueaderoEmpleado = () => {
   );
 };
 
-export default ParqueaderoEmpleado
+export default ParqueaderoEmpleado;
