@@ -4,10 +4,13 @@ import { Button, Space, Table, Tag, message } from "antd";
 import { useState } from 'react';
 import Constants from '../utils/Constants';
 import { useEffect } from 'react';
-
+import { useSelector } from "react-redux";
 function AprobarVisitas(props) {
 
-
+  const user = useSelector((state) => state.user);
+  if (!user.jwt) {
+    window.location.href = "/";
+  }
     const [visitas, setVisitas] = useState([])
     
 

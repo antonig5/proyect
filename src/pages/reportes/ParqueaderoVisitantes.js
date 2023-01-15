@@ -10,6 +10,7 @@ import {
   Select,
   Typography,
 } from "antd";
+import { useSelector } from "react-redux";
 import Constants from "../../utils/Constants";
 import { LeftOutlined } from "@ant-design/icons";
 import { NavLink } from "react-router-dom";
@@ -19,6 +20,11 @@ const { Option } = Select;
 const { Title } = Typography;
 const ParqueaderoVisitantes = () => {
   //variable para actualizar y almacenar los datos
+
+  const user = useSelector((state) => state.user);
+  if (!user.jwt) {
+    window.location.href = "/";
+  }
   const [data, setData] = useState([]);
   const [vehiculos, setVehiculos] = useState([]);
 

@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
 import Constants from '../utils/Constants';
+
 import {
+
   Input,
   Card,
   Col,
@@ -16,6 +18,7 @@ import {
   message,
   Popconfirm,
 } from "antd";
+import { useSelector } from "react-redux";
 const { Search } = Input;
 const { Option } = Select;
 const { confirm } = Modal;
@@ -24,7 +27,7 @@ const { confirm } = Modal;
 
 const Visitas = () => {
 
-
+  
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [datos, setDatos] = useState([]);
   const [marca, setMarca] = useState([]);
@@ -33,8 +36,13 @@ const Visitas = () => {
   const [vehiculos, setVehiculos] = useState([])
   const [elementos, setElementos] = useState([]);
   
-
+const user = useSelector((state) => state.user);
+if (!user.jwt) {
+  window.location.href = "/";
+}
   const ingresarVisitante = (idvisita) => {
+
+
 
       confirm({
         title: "Desea ingresar este visitante?",
@@ -801,6 +809,7 @@ console.log(res);
 
   return (
     <>
+      {console.log(user)}
       <Search
         placeholder="input search text"
         allowClear

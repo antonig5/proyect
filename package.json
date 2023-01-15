@@ -10,6 +10,7 @@
     "@testing-library/react": "^12.1.1",
     "@testing-library/user-event": "^12.5.0",
     "antd": "^5.1.0",
+    "axios": "^1.2.2",
     "dayjs": "^1.11.7",
     "dom-to-image": "^2.6.0",
     "moment": "^2.29.4",

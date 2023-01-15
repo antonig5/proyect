@@ -4,8 +4,14 @@ import Constants from "../../utils/Constants";
 import { LeftOutlined } from "@ant-design/icons";
 import { NavLink } from "react-router-dom";
 import { CSVLink } from "react-csv";
+import { useSelector } from "react-redux";
 const ReporteVisitante = () => {
   //variable de datos
+
+  const user = useSelector((state) => state.user);
+  if (!user.jwt) {
+    window.location.href = "/";
+  }
   const [data, setData] = useState([]);
   const [elementos, setElementos] = useState([]);
   const [vehiculos, setVehiculos] = useState([]);

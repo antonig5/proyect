@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import {
   Button,
   Row,
@@ -18,6 +19,10 @@ import Constants from "../utils/Constants";
 const { Option } = Select;
 
 const Empleados = () => {
+    const user = useSelector((state) => state.user);
+    if (!user.jwt) {
+      window.location.href = "/";
+    }
   const [data, setData] = useState([]);
   const [datos, setDatos] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);

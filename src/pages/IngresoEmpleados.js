@@ -17,12 +17,18 @@ import {
   message,
   Popconfirm,
 } from "antd";
+import { useSelector } from "react-redux";
 const { Search } = Input;
 const { Option } = Select;
 const { confirm } = Modal;
 
 const IngresoEmpleados = () => {
   // Estado para controlar si el modal de ingreso de visitantes está abierto o no
+
+  const user = useSelector((state) => state.user);
+  if (!user.jwt) {
+    window.location.href = "/";
+  }
   const [isModalOpen, setIsModalOpen] = useState(false);
   // Estado para almacenar los datos del visitante seleccionado
   const [datos, setDatos] = useState([]);

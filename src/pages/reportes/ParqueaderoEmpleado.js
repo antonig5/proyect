@@ -13,11 +13,21 @@ import {
 import Constants from "../../utils/Constants";
 import { LeftOutlined } from "@ant-design/icons";
 import { CSVLink, CSVDownload } from "react-csv";
+import { useSelector } from "react-redux";
 import { NavLink } from "react-router-dom";
 const { Option } = Select;
 const { Title } = Typography;
 const ParqueaderoEmpleado = () => {
   //variable para actualizar y almacenar los datos
+const { Title } = Typography
+
+const ParqueaderoEmpleado = () => {
+  //variable para actualizar y almacenar los datos
+
+  const user = useSelector((state) => state.user);
+  if (!user.jwt) {
+    window.location.href = "/";
+  }
   const [data, setData] = useState([]);
   const [vehiculos, setVehiculos] = useState([]);
 
@@ -155,4 +165,4 @@ const ParqueaderoEmpleado = () => {
   );
 };
 
-export default ParqueaderoEmpleado;
+export default ParqueaderoEmpleado
