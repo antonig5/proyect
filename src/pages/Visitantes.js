@@ -3,6 +3,7 @@ import domtoimage from "dom-to-image";
 import Barcode from "react-barcode";
 import Constants from "../utils/Constants";
 import dayjs from "dayjs";
+import { useSelector } from "react-redux";
 import {
   AutoComplete,
   Button,
@@ -19,6 +20,8 @@ import {
 const { Option } = Select;
 const { RangePicker } = DatePicker;
 const Visitantes = () => {
+    const user = useSelector((state) => state.user);
+
   const [data, setData] = useState([]);
   const [dependencias, setDependencia] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);

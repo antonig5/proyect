@@ -2,8 +2,12 @@ import React, { useEffect, useState } from "react";
 import { Button, Input, Space, Table, Tabs, Tag, Transfer } from "antd";
 import Constants from "../utils/Constants";
 import { NavLink } from "react-router-dom";
-
+import { useSelector } from "react-redux";
 const Reportes = () => {
+    const user = useSelector((state) => state.user);
+    if (!user.jwt) {
+      window.location.href = "/";
+    }
   return (
     <>
       <NavLink to="/reportesEmpleado">

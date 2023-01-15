@@ -9,6 +9,7 @@ import {
   Select,
   DatePicker,
 } from "antd";
+import { useSelector } from "react-redux";
 import { CSVLink } from "react-csv";
 import Constants from "../../utils/Constants";
 import { LeftOutlined } from "@ant-design/icons";
@@ -16,6 +17,10 @@ import { NavLink } from "react-router-dom";
 import moment from "moment";
 const { Option } = Select;
 const VisitasVisitante = () => {
+  const user = useSelector((state) => state.user);
+  if (!user.jwt) {
+    window.location.href = "/";
+  }
   const [data, setData] = useState([]);
   const [dependencia, setDependencia] = useState([]);
 

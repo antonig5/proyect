@@ -5,8 +5,15 @@ import { LeftOutlined } from "@ant-design/icons";
 import { NavLink } from "react-router-dom";
 import moment from "moment";
 import { CSVLink } from "react-csv";
+import { useSelector } from 'react-redux';
+
 const { Option } = Select;
 const ListaEmpleado = () => {
+
+  const user = useSelector((state) => state.user);
+  if (!user.jwt) {
+    window.location.href = "/";
+  }
   // Estado para almacenar los datos de los empleados
   const [data, setData] = useState([]);
 
@@ -202,6 +209,7 @@ const ListaEmpleado = () => {
         });
     }
   };
+
 
   return (
     <>

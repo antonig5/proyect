@@ -3,10 +3,17 @@ import { Button, Input, Space, Table, Tabs, Tag, Modal, Select, Typography } fro
 import Constants from "../../utils/Constants";
 import { LeftOutlined } from "@ant-design/icons";
 import { CSVLink, CSVDownload } from "react-csv";
+import { useSelector } from "react-redux";
 import { NavLink } from "react-router-dom";
 const { Option } = Select;
-const {Title} = Typography
+const { Title } = Typography
+
 const ParqueaderoEmpleado = () => {
+
+  const user = useSelector((state) => state.user);
+  if (!user.jwt) {
+    window.location.href = "/";
+  }
   const [data, setData] = useState([]);
   const [vehiculos, setVehiculos] = useState([]);
 

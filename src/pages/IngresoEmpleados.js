@@ -17,6 +17,7 @@ import {
   message,
   Popconfirm,
 } from "antd";
+import { useSelector } from "react-redux";
 const { Search } = Input;
 const { Option } = Select;
 const { confirm } = Modal;
@@ -25,7 +26,10 @@ const { confirm } = Modal;
 
 const IngresoEmpleados = () => {
 
-
+  const user = useSelector((state) => state.user);
+  if (!user.jwt) {
+    window.location.href = "/";
+  }
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [datos, setDatos] = useState([]);
   const [marca, setMarca] = useState([]);

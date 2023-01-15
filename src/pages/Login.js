@@ -1,4 +1,4 @@
-import React from "react";
+import React,{useState} from "react";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { Button, Checkbox, Col, Form, Image, Input, Row } from "antd";
 import { useDispatch, useSelector } from "react-redux";
@@ -9,8 +9,9 @@ import Visitantes from "./Visitantes";
 const Login = () => {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user);
+  const [respuiesta, setRespuesta] = useState("");
   const onFinish = (data) => {
-    fetch(`${Constants.URL}/api/auth/local?populate[0]=role`, {
+    fetch(`${Constants.URL}/api/auth/local`, {
       method: "POST",
       headers: {
         "content-type": "application/json",
@@ -23,9 +24,36 @@ const Login = () => {
     })
       .then((res) => res.json())
       .then((res) => {
-        dispatch(setUser({ res }));
+
+
+        console.log(res);
+
+        const user = res;
+        if (res.error) {
+          setRespuesta("error de usuario o contraseña");
+        } else {
+          fetch(`${Constants.URL}/api/users/${res.user.id}?populate=*`, {
+            method: "GET",
+            headers: {
+              "content-type": "application/json",
+              Accept: "application/json",
+            },
+          })
+            .then((res1) => res1.json())
+            .then((res1) => {
+              user.user.role = res1.role;
+              console.log(res1);
+              dispatch(setUser(user));
+            });
+        } 
+
+        
       });
   };
+
+     if (user.jwt) {
+       window.location.href="/visitas";
+     }
 
   return (
     <>
@@ -69,8 +97,9 @@ const Login = () => {
                 style={{ width: 300 }}
               />
             </Form.Item>
+            <p style={{ color: "red" }}>{ respuiesta}</p>
             <Form.Item>
-              <a className="login-form-forgot" href="">
+              <a className="login-form-forgot" href="/recuperar">
                 Forgot password
               </a>
             </Form.Item>
