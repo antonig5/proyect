@@ -698,8 +698,7 @@ console.log(res);
         <>
           <Button onClick={showModal}>Agregar elementos</Button>
           <Button onClick={showModall}>ingresar vehiculos</Button>
-          {console.log("datos")}
-          {console.log(datos.esta)}
+         
         </>
       ) : null}
 

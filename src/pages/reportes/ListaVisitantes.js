@@ -4,6 +4,7 @@ import Constants from "../../utils/Constants";
 import { LeftOutlined } from "@ant-design/icons";
 import { NavLink } from "react-router-dom";
 import moment from "moment";
+import { CSVLink } from "react-csv";
 const { Option } = Select;
 
 const ListaVisitantes = () => {
@@ -13,7 +14,7 @@ const ListaVisitantes = () => {
     if (value) {
       //Se hace una peticion GET a la ruta con los parametros necesarios para obtener los datos filtrados
       fetch(
-        `${Constants.URL}/api/ingresovehiculos?populate=*&populate[0]=vehiculo.visitante&filters[vehiculo][user]&populate[1]=vehiculo.visitante.dependencia&filters[vehiculo][topvehiculo]=${value}`
+        `${Constants.URL}/api/ingresovehiculos?populate=*&populate[0]=vehiculo.visitante&populate[1]=parqueadero&populate[2]=parqueaderomoto&filters[vehiculo][user]&populate[3]=vehiculo.visitante.dependencia&filters[vehiculo][topvehiculo]=${value}`
       )
         .then((r) => r.json())
         .then((r) => {
@@ -40,7 +41,7 @@ const ListaVisitantes = () => {
   //Funcion para obtener los datos de todos los visitantes
   const GetEmpleados = () => {
     fetch(
-      `${Constants.URL}/api/ingresovehiculos?populate=*&populate[0]=vehiculo.visitante&filters[vehiculo][user]&populate[1]=vehiculo.visitante.dependencia`,
+      `${Constants.URL}/api/ingresovehiculos?populate=*&populate[0]=vehiculo.visitante&populate[1]=parqueadero&populate[2]=parqueaderomoto&filters[vehiculo][user]&populate[3]=vehiculo.visitante.dependencia`,
       {
         method: "GET",
         headers: {
@@ -73,6 +74,15 @@ const ListaVisitantes = () => {
     GetEmpleados();
   }, []);
   // Columnas que se mostrarán en la tabla
+
+  const headers = [
+    { label: "Seccion", key: "seccion" },
+    { label: "Vehiculo", key: "vehiculos" },
+    { label: "Tipo", key: "topvehiculos" },
+    { label: "Fecha Entrada", key: "entrada" },
+    { label: "Fecha salida", key: "salida" },
+  ];
+
   const columns = [
     {
       title: "Seccion",
@@ -112,7 +122,7 @@ const ListaVisitantes = () => {
       fetch(
         `${
           Constants.URL
-        }/api/ingresovehiculos?populate=*&populate[0]=vehiculo.visitante&filters[vehiculo][user]&populate[1]=vehiculo.visitante.dependencia&filters[createdAt][$contains]=${moment(
+        }/api/ingresovehiculos?populate=*&populate[0]=vehiculo.visitante&populate[1]=parqueadero&populate[2]=parqueaderomoto&filters[vehiculo][user]&populate[3]=vehiculo.visitante.dependencia&filters[createdAt][$contains]=${moment(
           new Date(value)
         ).format("YYYY-MM-DD")}`
       )
@@ -143,7 +153,7 @@ const ListaVisitantes = () => {
       fetch(
         `${
           Constants.URL
-        }/api/ingresovehiculos?populate=*&populate[0]=vehiculo.visitante&filters[vehiculo][user]&populate[1]=vehiculo.visitante.dependencia&filters[createdAt][$contains]=${moment(
+        }/api/ingresovehiculos?populate=*&populate[0]=vehiculo.visitante&populate[1]=parqueadero&populate[2]=parqueaderomoto&filters[vehiculo][user]&populate[3]=vehiculo.visitante.dependencia&filters[createdAt][$contains]=${moment(
           new Date(value)
         ).format("YYYY-MM-DD")}`
       )
@@ -183,6 +193,13 @@ const ListaVisitantes = () => {
       <DatePicker placeholder="Fecha entrada" onChange={onSearch} />
       <DatePicker placeholder="Fecha salida" onChange={onExit} />
 
+      <CSVLink
+        className="ant-btn css-dev-only-do-not-override-9ntgx0 ant-btn-default"
+        data={data}
+        headers={headers}
+      >
+        Descargar Excel
+      </CSVLink>
       <Table columns={columns} dataSource={data} />
     </>
   );

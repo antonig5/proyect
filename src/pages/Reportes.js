@@ -8,10 +8,10 @@ const Reportes = () => {
     <>
       <NavLink to="/reportesEmpleado">
         {" "}
-        <Button>Reporte de Empleados</Button>{" "}
+        <Button>Lista de Empleados</Button>{" "}
       </NavLink>
       <NavLink to="/reportesVisitante">
-        <Button>Reporte de visitantes</Button>{" "}
+        <Button>Lista de visitantes</Button>{" "}
       </NavLink>
       <NavLink to="/visitasVisitante">
         <Button>Visitas Visitantes</Button>{" "}

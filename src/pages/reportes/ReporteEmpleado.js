@@ -3,7 +3,7 @@ import { Button, Input, Space, Table, Tabs, Tag, Modal } from "antd";
 import Constants from "../../utils/Constants";
 import { LeftOutlined } from "@ant-design/icons";
 import { NavLink } from "react-router-dom";
-
+import { CSVLink } from "react-csv";
 const ReporteEmpleado = () => {
   const [data, setData] = useState([]);
   const [vehiculos, setVehiculos] = useState([]);
@@ -48,7 +48,7 @@ const ReporteEmpleado = () => {
     )
       .then((res) => res.json())
       .then((res) => {
-        setElementos(res);
+        setElementos(res.data);
       });
   };
   const GetVehiculos = (id) => {
@@ -57,12 +57,21 @@ const ReporteEmpleado = () => {
     )
       .then((res) => res.json())
       .then((res) => {
-        setVehiculos(res.data.attributes.vehiculos);
+        setVehiculos(res.vehiculos);
       });
   };
   useEffect(() => {
     GetEmpleados();
   }, []);
+
+   const headers = [
+     { label: "ID", key: "id" },
+     { label: "Nombre", key: "nombres" },
+     { label: "Apellido", key: "apellidos" },
+     { label: "Documento", key: "documentos" },
+     { label: "Dependencia", key: "dependencias" },
+   ];
+
 
   const columns = [
     {
@@ -144,7 +153,7 @@ const ReporteEmpleado = () => {
         onCancel={handleCancel}
       >
         {" "}
-        {elementos.data.map((d) => {
+        {elementos.map((d) => {
           return (
             <ul>
               {" "}
@@ -159,17 +168,32 @@ const ReporteEmpleado = () => {
         onOk={handleOk}
         onCancel={handleCancel}
       >
-        {vehiculos}
+        {vehiculos.map((v) => {
+          return (
+            <ul>
+              {" "}
+              <li>{v.placa} </li>{" "}
+            </ul>
+          );
+        })}
       </Modal>
       <NavLink to="/reportes">
         <Button icon={<LeftOutlined />}>Regresar</Button>
       </NavLink>
 
       <Input
+        style={{ width: "400px" }}
         onChange={onSearch}
         showCount
         placeholder="Buscar por nombre de empleado "
       />
+      <CSVLink
+        className="ant-btn css-dev-only-do-not-override-9ntgx0 ant-btn-default"
+        data={data}
+        headers={headers}
+      >
+        Descargar Excel
+      </CSVLink>
       <Table columns={columns} dataSource={data} />
     </>
   );

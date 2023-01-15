@@ -3,11 +3,11 @@ import { Button, Input, Space, Table, Tabs, Tag, Modal } from "antd";
 import Constants from "../../utils/Constants";
 import { LeftOutlined } from "@ant-design/icons";
 import { NavLink } from "react-router-dom";
-
+import { CSVLink } from "react-csv";
 const ReporteVisitante = () => {
   const [data, setData] = useState([]);
   const [elementos, setElementos] = useState([]);
-  const [vehiculos, setVehiculos] = useState({});
+  const [vehiculos, setVehiculos] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [ModalOpen, setModalOpen] = useState(false);
   const showModal = () => {
@@ -50,7 +50,7 @@ const ReporteVisitante = () => {
     )
       .then((res) => res.json())
       .then((res) => {
-        setElementos(res);
+        setElementos(res.data);
       });
   };
 
@@ -60,13 +60,22 @@ const ReporteVisitante = () => {
     )
       .then((res) => res.json())
       .then((res) => {
-        setVehiculos(res.data.attributes.vehiculos);
+        setVehiculos(res.data.attributes.vehiculos.data);
       });
   };
 
   useEffect(() => {
     GetEmpleados();
   }, []);
+
+     const headers = [
+       { label: "ID", key: "id" },
+       { label: "Nombre", key: "nombres" },
+       { label: "Apellido", key: "apellidos" },
+       { label: "Documento", key: "documentos" },
+       { label: "Dependencia", key: "dependencias" },
+     
+     ];
 
   const columns = [
     {
@@ -150,7 +159,7 @@ const ReporteVisitante = () => {
         onOk={handleOk}
         onCancel={handleCancel}
       >
-        {elementos.data.map((e) => {
+        {elementos.map((e) => {
           return (
             <ul>
               {" "}
@@ -165,7 +174,7 @@ const ReporteVisitante = () => {
         onOk={handleOk}
         onCancel={handleCancel}
       >
-        {vehiculos.data.map((e) => {
+        {vehiculos.map((e) => {
           return (
             <ul>
               <li>Placa: {e.attributes.placa} </li>
@@ -180,10 +189,19 @@ const ReporteVisitante = () => {
       </NavLink>
 
       <Input
+        style={{width: "400px"}}
         onChange={onSearch}
         showCount
         placeholder="Buscar por nombre de Visitante"
       />
+
+      <CSVLink
+        className="ant-btn css-dev-only-do-not-override-9ntgx0 ant-btn-default"
+        data={data}
+        headers={headers}
+      >
+        Descargar Excel
+      </CSVLink>
       <Table columns={columns} dataSource={data} />
     </>
   );
