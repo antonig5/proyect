@@ -20,10 +20,10 @@ const Reportes = () => {
         <Button>Visitas Empleados</Button>{" "}
       </NavLink>
       <NavLink to="/parqueaderoEmpleado">
-        <Button>Parqueaderos Empleados</Button>{" "}
+        <Button>Parqueaderos Motos</Button>{" "}
       </NavLink>
       <NavLink to="/parqueaderoVisitante">
-        <Button>Parqueaderos Visitantes</Button>{" "}
+        <Button>Parqueaderos Vehiculos</Button>{" "}
       </NavLink>
     </>
   );

@@ -19,7 +19,7 @@ const ParqueaderoEmpleado = () => {
 
   const GetEmpleados = () => {
     fetch(
-      `${Constants.URL}/api/parqueaderos?pagination[start]=0&pagination[limit]=35&populate=*&populate[0]=ingresovehiculos.vehiculo`
+      `${Constants.URL}/api/parqueaderomotos?pagination[start]=0&pagination[limit]=35&populate=*&populate[0]=ingresovehiculos.vehiculo`
     )
       .then((r) => r.json())
       .then((r) => {
@@ -41,7 +41,7 @@ const ParqueaderoEmpleado = () => {
 
   const GetVehiculos = (id) => {
     fetch(
-      `${Constants.URL}/api/parqueaderos/${id}?populate=*&populate[0]=ingresovehiculos.vehiculo`
+      `${Constants.URL}/api/parqueaderomotos/${id}?populate=*&populate[0]=ingresovehiculos.vehiculo`
     )
       .then((r) => r.json())
       .then((r) => {

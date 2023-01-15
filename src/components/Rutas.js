@@ -16,6 +16,7 @@ import Vehiculos from "../pages/Vehiculos";
 import Visitantes from "../pages/Visitantes";
 import Visitas from "../pages/Visitas";
 import IngresoEmpleados from '../pages/IngresoEmpleados';
+import Busquedas from "../pages/Busquedas";
 
 const Rutas = () => {
   return (
@@ -38,8 +39,10 @@ const Rutas = () => {
           element={<ParqueaderoVisitantes />}
         />
         <Route path="/parqueadero" element={<Parqueadero />} />
-        
+
         <Route path="/ingresoempleados" element={<IngresoEmpleados />} />
+        <Route path="/busquedas" element={<Busquedas />} />
+
         <Route path="*" element={<h1>nada</h1>}></Route>
       </Routes>
     </>

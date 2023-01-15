@@ -9,7 +9,7 @@ const Login = () => {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user);
   const onFinish = (data) => {
-    fetch(`${Constants.URL}/api/auth/local`, {
+    fetch(`${Constants.URL}/api/auth/local?populate[0]=role`, {
       method: "POST",
       headers: {
         "content-type": "application/json",

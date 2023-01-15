@@ -1,52 +1,22 @@
 
-import { useState } from 'react';
-import { Form, Input, Button } from "antd";
-const Busquedas = () => {
-  const [form] = Form.useForm();
-  const [items, setItems] = useState([1]);
+import React from 'react';
+import { CSVLink, CSVDownload } from "react-csv";
 
-  const onFinish = (values) => {
-    console.log("Success:", values);
-  };
+const csvData = [
+  ["firstname", "lastname", "email"],
+  ["Ahmed", "Tomi", "ah@smthing.co.com"],
+  ["Raed", "Labes", "rl@smthing.co.com"],
+  ["Yezzi", "Min l3b", "ymin@cocococo.com"],
+];
 
-  const onFinishFailed = (errorInfo) => {
-    console.log("Failed:", errorInfo);
-  };
-
-  const addItem = () => {
-    setItems([...items, items.length + 1]);
-  };
-
-  const removeItem = (index) => {
-    setItems(items.filter((item) => item !== index));
-
-  };
-
+function Busquedas(props) {
   return (
-    <Form form={form} onFinish={onFinish} onFinishFailed={onFinishFailed}>
-      <Form.List name="items">
-        {items.map((item, index) => (
-          <Form.Item
-            key={item}
-            label={`Item ${item}`}
-            name={[item, "name"]}
-            rules={[{ required: true, message: "Please input the name!" }]}
-          >
-            <Input />
-            <Button type="danger" onClick={() => removeItem(item)}>
-              Remove
-            </Button>
-          </Form.Item>
-        ))}
-      </Form.List>
-      <Button type="primary" onClick={addItem}>
-        Add Item
-      </Button>
-      <Button type="primary" htmlType="submit">
-        Submit
-      </Button>
-    </Form>
+    <div>
+      <CSVLink data={csvData}>Download me</CSVLink>;
+
+<CSVDownload data={csvData} target="_blank" />;
+    </div>
   );
-};
+}
 
 export default Busquedas;

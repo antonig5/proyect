@@ -12,14 +12,17 @@ import {
   Modal,
   Form,
   Input,
+
   InputNumber,
   Row,
   Select,
   Col,
 } from "antd";
+const { Option } = Select;
 const { RangePicker } = DatePicker;
 const Visitantes = () => {
   const [data, setData] = useState([]);
+  const [dependencias, setDependencia] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const showModal = () => {
     setIsModalOpen(true);
@@ -79,13 +82,43 @@ const Visitantes = () => {
     );
   };
   function downloadBarcode() {
+    
     const barcode = document.getElementById("barcode");
-    domtoimage.toPng(barcode).then(function (dataUrl) {
-      const link = document.createElement("a");
-      link.download = "barcode.png";
-      link.href = dataUrl;
-      link.click();
-    });
+
+    domtoimage
+      .toJpeg(barcode, { quality: 0.95 })
+      .then(function (dataUrl) {
+
+        var img = new Image();
+        img.src = dataUrl;
+
+        console.log(dataUrl.toString());
+        document.getElementById("a").appendChild(img);
+       
+      });
+
+    
+  }
+
+  const getDependencias = (ev) => {
+
+    if (ev==null) {
+       setDependencia([]);
+    } else {
+         console.log(ev);
+    fetch(`${Constants.URL}/api/dependencias?filters[edad_minima][$lte]=${ev}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }).then((res) => res.json())
+      .then((res) => {
+        console.log(res);
+        setDependencia(res.data)
+
+      });
+    }
+ 
   }
 
   return (
@@ -119,7 +152,17 @@ const Visitantes = () => {
                 style={{ width: 200 }}
               />
             </Form.Item>
-
+            <Form.Item
+              name="nombre"
+              rules={[
+                {
+                  required: true,
+                  message: "Please input your nickname!",
+                },
+              ]}
+            >
+              <Input placeholder="Nombre" />
+            </Form.Item>
             <Form.Item
               name="apellido"
               rules={[
@@ -133,18 +176,6 @@ const Visitantes = () => {
             </Form.Item>
 
             <Form.Item
-              name="nombre"
-              rules={[
-                {
-                  required: true,
-                  message: "Please input your nickname!",
-                },
-              ]}
-            >
-              <Input placeholder="Nombre" />
-            </Form.Item>
-
-            <Form.Item
               name="edad"
               rules={[
                 {
@@ -153,7 +184,12 @@ const Visitantes = () => {
                 },
               ]}
             >
-              <InputNumber placeholder="Edad" minLength={1} maxLength={2} />
+              <InputNumber
+                onChange={getDependencias}
+                placeholder="Edad"
+                minLength={1}
+                maxLength={2}
+              />
             </Form.Item>
 
             <Form.Item
@@ -183,10 +219,30 @@ const Visitantes = () => {
             >
               <Input placeholder="E-mail" />
             </Form.Item>
+            <Form.Item
+              name="dependencia"
+              label="Dependencia"
+              rules={[{ required: true }]}
+            >
+              <Select
+                placeholder="Dependencia"
+                // onChange={onGenderChange}
+                allowClear
+              >
+                {dependencias.map((dependencia) => {
+                  return (
+                    <Option value={dependencia.id}>
+                      {dependencia.attributes.dependencia}
+                    </Option>
+                  );
+                })}
+              </Select>
+            </Form.Item>
           </Col>
         </Row>
-        <Form.Item name="motivo">
+        <Form.Item label="Motivo" name="motivo">
           <Select
+            placeholder="Motivo dela visita"
             style={{
               width: 120,
             }}
@@ -207,8 +263,24 @@ const Visitantes = () => {
             ]}
           />
         </Form.Item>
-        <Form.Item name="asunto">
+        <Form.Item name="asunto" rules={[{ required: true }]}>
           <Input placeholder="asunto" />
+        </Form.Item>
+
+        <Form.Item
+          name="tiempovisita"
+          rules={[
+            {
+              required: true,
+            },
+          ]}
+        >
+          <InputNumber
+            style={{ width: "500px" }}
+            minLength={1}
+            maxLength={2}
+            placeholder="Tiempo estimado de la visita en minutos"
+          />
         </Form.Item>
 
         <Form.Item
@@ -216,7 +288,7 @@ const Visitantes = () => {
           label="Ingreso"
           rules={[{ required: true, message: "Please select a date" }]}
         >
-          <RangePicker showTime disabledDate={disabledDate} />
+          <DatePicker showTime disabledDate={disabledDate} />
         </Form.Item>
 
         <Form.Item>
@@ -227,7 +299,11 @@ const Visitantes = () => {
       </Form>
       {data.id > 0 ? (
         <Modal title="Basic Modal" open={isModalOpen} onOk={handleOk}>
-          <Barcode value={data.id} id="barcode" />
+          <div id="barcode">
+            <Barcode value={data.id}  />
+          </div>
+          <div id="a"></div>
+
           <Button onClick={downloadBarcode}>Descargar</Button>
         </Modal>
       ) : null}
