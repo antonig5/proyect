@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Button, Input, Space, Table, Tabs, Tag, Modal } from "antd";
+import { Button, Input, Space, Table, Tabs, Tag, Modal, Select, Typography } from "antd";
 import Constants from "../../utils/Constants";
 import { LeftOutlined } from "@ant-design/icons";
+import { CSVLink, CSVDownload } from "react-csv";
 import { NavLink } from "react-router-dom";
-
+const { Option } = Select;
+const {Title} = Typography
 const ParqueaderoEmpleado = () => {
   const [data, setData] = useState([]);
   const [vehiculos, setVehiculos] = useState([]);
@@ -17,9 +19,20 @@ const ParqueaderoEmpleado = () => {
     setModalOpen(false);
   };
 
-  const GetEmpleados = () => {
+  const GetEmpleados = (ev) => {
+      let inicio = 0;
+      let final = 30;
+
+      if (ev === "empleados") {
+        inicio = 0;
+        final = 35;
+      } else if (ev === "visitantes") {
+        inicio = 30;
+        final = 40;
+      }
+  
     fetch(
-      `${Constants.URL}/api/parqueaderomotos?pagination[start]=0&pagination[limit]=35&populate=*&populate[0]=ingresovehiculos.vehiculo`
+      `${Constants.URL}/api/parqueaderomotos?pagination[start]=${inicio}&pagination[limit]=${final}&populate=*&populate[0]=ingresovehiculos.vehiculo`
     )
       .then((r) => r.json())
       .then((r) => {
@@ -30,6 +43,8 @@ const ParqueaderoEmpleado = () => {
             seccion: datos.attributes.nombre,
             entrada: datos.attributes.createdAt,
             salida: datos.attributes.updatedAt,
+            key: datos.id,
+            estado: datos.attributes.estado ? "Ocupado" : "Libre",
 
             // elementos: datos.elementos.data[0].attributes.nombre,
           });
@@ -53,6 +68,12 @@ const ParqueaderoEmpleado = () => {
     GetEmpleados();
   }, []);
 
+   const headers = [
+     { label: "Paqueadero", key: "seccion" },
+     { label: "Fecha Entrada", key: "entrada" },
+     { label: "Fecha Salida", key: "salida" },
+   ];
+
   const columns = [
     {
       title: "Seccion",
@@ -70,19 +91,17 @@ const ParqueaderoEmpleado = () => {
       key: "salida",
     },
     {
-      title: "Action",
-      key: "action",
-      render: (data) => (
-        <Space size="middle">
-          <Button
-            onClick={() => {
-              GetVehiculos(data.seccion);
-              setModalOpen(true);
-            }}
-          >
-            Ver Vehiculos
-          </Button>
-        </Space>
+      title: "Estado",
+      key: "estado",
+      dataIndex: "estado",
+      render: (_, { estado }) => (
+        <>
+          {estado === "Libre" ? (
+            <Tag color={"green"}>{estado}</Tag>
+          ) : (
+            <Tag color={"red"}>{estado}</Tag>
+          )}
+        </>
       ),
     },
   ];
@@ -97,17 +116,28 @@ const ParqueaderoEmpleado = () => {
   };
   return (
     <>
+      <Title level={3}>Parqueaderos Motos</Title>
       <Modal
         title="Mis Vehiculos"
         open={ModalOpen}
         onOk={handleOk}
         onCancel={handleCancel}
       ></Modal>
+
       <NavLink to="/reportes">
         <Button icon={<LeftOutlined />}>Regresar</Button>
       </NavLink>
-
-      <Input onChange={onSearch} showCount />
+      <Select onChange={GetEmpleados} defaultValue="empleados">
+        <Option value="empleados">Empleados</Option>
+        <Option value="visitantes">Visitantes</Option>
+      </Select>
+      <CSVLink
+        className="ant-btn css-dev-only-do-not-override-9ntgx0 ant-btn-default"
+        data={data}
+        headers={headers}
+      >
+        Descargar Excel
+      </CSVLink>
       <Table columns={columns} dataSource={data} />
     </>
   );

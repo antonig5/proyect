@@ -13,6 +13,7 @@ import {
 import Constants from "../../utils/Constants";
 import { LeftOutlined } from "@ant-design/icons";
 import { NavLink } from "react-router-dom";
+import { CSVLink } from "react-csv";
 import moment from "moment";
 const { Option } = Select;
 
@@ -100,6 +101,16 @@ const VisitasEmpleado = () => {
     Getdependencia();
     GetEmpleados();
   }, []);
+
+   const headers = [
+     { label: "ID", key: "id" },
+     { label: "Documento", key: "documentos" },
+     { label: "Empleados", key: "users" },
+     { label: "Estado", key: "estados" },
+     { label: "Dependencia", key: "dependencias" },
+     { label: "Fecha entrada", key: "entradas" },
+     { label: "Fecha salida", key: "entradas" },
+   ];
 
   const columns = [
     {
@@ -233,6 +244,13 @@ const VisitasEmpleado = () => {
 
       <DatePicker onChange={onSearch} placeholder="fecha entrada" />
       <DatePicker onChange={onSearchExit} placeholder="fecha salida" />
+      <CSVLink
+        className="ant-btn css-dev-only-do-not-override-9ntgx0 ant-btn-default"
+        data={data}
+        headers={headers}
+      >
+        Descargar Excel
+      </CSVLink>
       <Table columns={columns} dataSource={data} />
     </>
   );

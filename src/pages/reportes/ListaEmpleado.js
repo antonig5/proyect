@@ -4,6 +4,7 @@ import Constants from "../../utils/Constants";
 import { LeftOutlined } from "@ant-design/icons";
 import { NavLink } from "react-router-dom";
 import moment from "moment";
+import { CSVLink } from "react-csv";
 const { Option } = Select;
 const ListaEmpleado = () => {
   const [data, setData] = useState([]);
@@ -11,7 +12,7 @@ const ListaEmpleado = () => {
   const datos = (value) => {
     if (value == "moto") {
       fetch(
-        `${Constants.URL}/api/ingresovehiculos?populate=*&populate[0]=vehiculo.user&filters[vehiculo][visitante]&populate[1]=vehiculo.user.dependencia&filters[vehiculo][topvehiculo]=${value}`
+        `${Constants.URL}/api/ingresovehiculos?populate=*&populate[0]=parqueadero&populate[1]=vehiculo.user&populate[2]=parqueaderomoto&filters[vehiculo][visitante]&populate[3]=vehiculo.user.dependencia&filters[vehiculo][topvehiculo]=${value}`
       )
         .then((r) => r.json())
         .then((r) => {
@@ -35,7 +36,7 @@ const ListaEmpleado = () => {
         });
     } else if (value == "carro") {
       fetch(
-        `${Constants.URL}/api/ingresovehiculos?populate=*&populate[0]=vehiculo.user&filters[vehiculo][visitante]&populate[1]=vehiculo.user.dependencia&filters[vehiculo][topvehiculo]=${value}`
+        `${Constants.URL}/api/ingresovehiculos?populate=*&populate[0]=vehiculo.user&populate[1]=parqueadero&populate[2]=parqueaderomoto&filters[vehiculo][visitante]&populate[3]=vehiculo.user.dependencia&filters[vehiculo][topvehiculo]=${value}`
       )
         .then((r) => r.json())
         .then((r) => {
@@ -61,7 +62,7 @@ const ListaEmpleado = () => {
 
   const GetEmpleados = () => {
     fetch(
-      `${Constants.URL}/api/ingresovehiculos?populate=*&populate[0]=vehiculo.user&filters[vehiculo][visitante]&populate[1]=vehiculo.user.dependencia`
+      `${Constants.URL}/api/ingresovehiculos?populate=*&populate[0]=vehiculo.user&populate[1]=parqueadero&populate[2]=parqueaderomoto&filters[vehiculo][visitante]&populate[3]=vehiculo.user.dependencia`
     )
       .then((r) => r.json())
       .then((r) => {
@@ -84,9 +85,16 @@ const ListaEmpleado = () => {
   };
 
   useEffect(() => {
-    datos();
+   // datos();
     GetEmpleados();
   }, []);
+ const headers = [
+   { label: "Seccion", key: "seccion" },
+   { label: "Vehiculo", key: "vehiculos" },
+   { label: "Tipo", key: "topvehiculos" },
+   { label: "Fecha Entrada", key: "entrada" },
+   { label: "Fecha salida", key: "salida" },
+ ];
 
   const columns = [
     {
@@ -198,6 +206,13 @@ const ListaEmpleado = () => {
       </Select>
       <DatePicker placeholder="Fecha entrada" onChange={onSearch} />
       <DatePicker placeholder="Fecha salida" onChange={onExit} />
+      <CSVLink
+        className="ant-btn css-dev-only-do-not-override-9ntgx0 ant-btn-default"
+        data={data}
+        headers={headers}
+      >
+        Descargar Excel
+      </CSVLink>
       <Table columns={columns} dataSource={data} />
     </>
   );

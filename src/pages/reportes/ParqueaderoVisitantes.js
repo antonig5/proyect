@@ -1,12 +1,22 @@
 import React, { useEffect, useState } from "react";
-import { Button, Input, Space,  Table, Tabs, Tag, Modal, Select } from "antd";
+import {
+  Button,
+  Input,
+  Space,
+  Table,
+  Tabs,
+  Tag,
+  Modal,
+  Select,
+  Typography,
+} from "antd";
 import Constants from "../../utils/Constants";
 import { LeftOutlined } from "@ant-design/icons";
 import { NavLink } from "react-router-dom";
 import Empleados from '../Empleados';
 import { CSVLink, CSVDownload } from "react-csv";
 const {Option} = Select
-
+const {Title} = Typography
 const ParqueaderoVisitantes = () => {
   const [data, setData] = useState([]);
   const [vehiculos, setVehiculos] = useState([]);
@@ -21,6 +31,7 @@ const ParqueaderoVisitantes = () => {
   };
 
   const GetEmpleados = (ev) => {
+
     let inicio = 0;
     let final = 35;
 
@@ -28,7 +39,7 @@ const ParqueaderoVisitantes = () => {
 if (ev==="empleados") {
   inicio = 0;
   final = 35;
-} else if("visitantes") {
+} else if (ev === "visitantes") {
   inicio = 35;
   final = 50;
 }
@@ -48,7 +59,8 @@ if (ev==="empleados") {
             seccion: datos.attributes.nombre,
             entrada: datos.attributes.createdAt,
             salida: datos.attributes.updatedAt,
-            key: datos.id
+            key: datos.id,
+            estado: datos.attributes.estado?"Ocupado":"Libre"
 
             // elementos: datos.elementos.data[0].attributes.nombre,
           });
@@ -96,21 +108,20 @@ if (ev==="empleados") {
       key: "salida",
     },
     {
-      title: "Action",
-      key: "action",
-      render: (data) => (
-        <Space size="middle">
-          <Button
-            onClick={() => {
-              GetVehiculos(data.seccion);
-              setModalOpen(true);
-            }}
-          >
-            Ver Vehiculos
-          </Button>
-        </Space>
+      title: "Estado",
+      key: "estado",
+      dataIndex: "estado",
+      render: (_, { estado }) => (
+        <>
+          {estado === "Libre" ? (
+            <Tag color={"green"}>{estado}</Tag>
+          ) : (
+            <Tag color={"red"}>{estado}</Tag>
+          )}
+        </>
       ),
     },
+   
   ];
   const onSearch = (value) => {
     fetch(
@@ -123,6 +134,7 @@ if (ev==="empleados") {
   };
   return (
     <>
+      <Title level={3}>Parqueaderos Autos</Title>
       <Modal
         title="Mis Vehiculos"
         open={ModalOpen}
@@ -136,7 +148,7 @@ if (ev==="empleados") {
         <Option value="empleados">Empleados</Option>
         <Option value="visitantes">Visitantes</Option>
       </Select>
-      <Input style={{ width: "200px" }} onChange={onSearch} showCount />
+
       <CSVLink
         className="ant-btn css-dev-only-do-not-override-9ntgx0 ant-btn-default"
         data={data}

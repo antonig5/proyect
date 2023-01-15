@@ -19,6 +19,7 @@ import IngresoEmpleados from "../pages/IngresoEmpleados";
 import ListaEmpleado from "../pages/reportes/ListaEmpleado";
 import ListaVisitantes from "../pages/reportes/ListaVisitantes";
 import RouterError from "../pages/RouterError";
+import AprobarVisitas from '../pages/AprobarVisitas';
 const Rutas = () => {
   return (
     <>
@@ -39,7 +40,7 @@ const Rutas = () => {
           path="/parqueaderoVisitante"
           element={<ParqueaderoVisitantes />}
         />
-
+        <Route path="/aprobarvisitas" element={<AprobarVisitas />} />
         <Route path="/ingresoempleados" element={<IngresoEmpleados />} />
         <Route path="/listaEmpleado" element={<ListaEmpleado />} />
         <Route path="/listaVisitante" element={<ListaVisitantes />} />
