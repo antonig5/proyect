@@ -6,9 +6,12 @@ import { NavLink } from "react-router-dom";
 import moment from "moment";
 const { Option } = Select;
 const ListaEmpleado = () => {
+  // Estado para almacenar los datos de los empleados
   const [data, setData] = useState([]);
 
+  // Función para obtener los datos de los empleados en base a un valor recibido
   const datos = (value) => {
+    // Si el valor recibido es "moto" hace una petición fetch a una URL específica
     if (value == "moto") {
       fetch(
         `${Constants.URL}/api/ingresovehiculos?populate=*&populate[0]=vehiculo.user&filters[vehiculo][visitante]&populate[1]=vehiculo.user.dependencia&filters[vehiculo][topvehiculo]=${value}`
@@ -17,6 +20,7 @@ const ListaEmpleado = () => {
         .then((r) => {
           console.log(r);
           const user = [];
+          // Recorre los datos obtenidos y los almacena en el estado "data"
           r.data.map((datos) => {
             user.push({
               seccion: datos.id,
@@ -30,10 +34,11 @@ const ListaEmpleado = () => {
               // elementos: datos.elementos.data[0].attributes.nombre,
             });
           });
-
+          // Actualiza el estado "data" con los datos obtenidos
           setData(user);
         });
     } else if (value == "carro") {
+      // Si el valor recibido es "carro" hace una petición fetch a una URL específica
       fetch(
         `${Constants.URL}/api/ingresovehiculos?populate=*&populate[0]=vehiculo.user&filters[vehiculo][visitante]&populate[1]=vehiculo.user.dependencia&filters[vehiculo][topvehiculo]=${value}`
       )
@@ -41,6 +46,7 @@ const ListaEmpleado = () => {
         .then((r) => {
           console.log(r);
           const user = [];
+          // Recorre los datos obtenidos y los almacena en el estado "data"
           r.data.map((datos) => {
             user.push({
               seccion: datos.id,
@@ -53,12 +59,12 @@ const ListaEmpleado = () => {
               // elementos: datos.elementos.data[0].attributes.nombre,
             });
           });
-
+          // Actualiza el estado "data" con los datos obtenidos
           setData(user);
         });
     }
   };
-
+  // Función para obtener los datos de los empleados
   const GetEmpleados = () => {
     fetch(
       `${Constants.URL}/api/ingresovehiculos?populate=*&populate[0]=vehiculo.user&filters[vehiculo][visitante]&populate[1]=vehiculo.user.dependencia`
@@ -67,6 +73,7 @@ const ListaEmpleado = () => {
       .then((r) => {
         console.log(r);
         const user = [];
+        // Recorre los datos obtenidos y los almacena en el estado "data"
         r.data.map((datos) => {
           user.push({
             seccion: datos.id,
@@ -78,7 +85,7 @@ const ListaEmpleado = () => {
             // elementos: datos.elementos.data[0].attributes.nombre,
           });
         });
-
+        // Actualiza el estado "data" con los datos obtenidos
         setData(user);
       });
   };
@@ -87,7 +94,7 @@ const ListaEmpleado = () => {
     datos();
     GetEmpleados();
   }, []);
-
+  // Columnas que se mostrarán en la tabla
   const columns = [
     {
       title: "Seccion",
@@ -120,6 +127,11 @@ const ListaEmpleado = () => {
       key: "salida",
     },
   ];
+  // onSearch y onExit son funciones que se ejecutan al seleccionar una fecha en los componentes de fecha.
+  // ambas funciones reciben un valor que es la fecha seleccionada.
+  // ambas funciones hacen una petición a la api para obtener los datos de ingresos de vehículos, y filtran los datos según la fecha seleccionada.
+  // si no hay fecha seleccionada, ambas funciones llaman a la función GetEmpleados para obtener todos los datos sin filtrar.
+  // los datos obtenidos son almacenados en el estado data y luego se actualiza la tabla con esta información.
   const onSearch = (value) => {
     if (value == null) {
       GetEmpleados();

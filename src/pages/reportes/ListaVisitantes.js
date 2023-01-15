@@ -8,9 +8,10 @@ const { Option } = Select;
 
 const ListaVisitantes = () => {
   const [data, setData] = useState([]);
-
+  // Se establece una función para filtrar los datos dependiendo del tipo de vehículo seleccionado en el Select
   const datos = (value) => {
     if (value) {
+      //Se hace una peticion GET a la ruta con los parametros necesarios para obtener los datos filtrados
       fetch(
         `${Constants.URL}/api/ingresovehiculos?populate=*&populate[0]=vehiculo.visitante&filters[vehiculo][user]&populate[1]=vehiculo.visitante.dependencia&filters[vehiculo][topvehiculo]=${value}`
       )
@@ -18,6 +19,8 @@ const ListaVisitantes = () => {
         .then((r) => {
           console.log(r);
           const user = [];
+          //Se recorre el arreglo de datos y se guardan los datos necesarios en un nuevo arreglo
+
           r.data.map((datos) => {
             user.push({
               seccion: datos.id,
@@ -29,12 +32,12 @@ const ListaVisitantes = () => {
               // elementos: datos.elementos.data[0].attributes.nombre,
             });
           });
-
+          //Se actualiza el estado con el nuevo arreglo de datos
           setData(user);
         });
     }
   };
-
+  //Funcion para obtener los datos de todos los visitantes
   const GetEmpleados = () => {
     fetch(
       `${Constants.URL}/api/ingresovehiculos?populate=*&populate[0]=vehiculo.visitante&filters[vehiculo][user]&populate[1]=vehiculo.visitante.dependencia`,
@@ -49,6 +52,7 @@ const ListaVisitantes = () => {
       .then((r) => {
         console.log(r);
         const user = [];
+        //Se recorre el arreglo de datos y se guardan los datos necesarios en un nuevo arreglo
         r.data.map((datos) => {
           user.push({
             seccion: datos.id,
@@ -60,7 +64,7 @@ const ListaVisitantes = () => {
             // elementos: datos.elementos.data[0].attributes.nombre,
           });
         });
-
+        //Se actualiza el estado con el nuevo arreglo de datos
         setData(user);
       });
   };
@@ -68,7 +72,7 @@ const ListaVisitantes = () => {
   useEffect(() => {
     GetEmpleados();
   }, []);
-
+  // Columnas que se mostrarán en la tabla
   const columns = [
     {
       title: "Seccion",
@@ -96,7 +100,11 @@ const ListaVisitantes = () => {
       key: "salida",
     },
   ];
-
+  // onSearch y onExit son funciones que se ejecutan al seleccionar una fecha en los componentes de fecha.
+  // ambas funciones reciben un valor que es la fecha seleccionada.
+  // ambas funciones hacen una petición a la api para obtener los datos de ingresos de vehículos, y filtran los datos según la fecha seleccionada.
+  // si no hay fecha seleccionada, ambas funciones llaman a la función GetEmpleados para obtener todos los datos sin filtrar.
+  // los datos obtenidos son almacenados en el estado data y luego se actualiza la tabla con esta información.
   const onSearch = (value) => {
     if (value == null) {
       GetEmpleados();

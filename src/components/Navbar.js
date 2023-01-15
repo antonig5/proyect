@@ -1,14 +1,18 @@
+// importa los componentes necesarios de las bibliotecas react y antd
 import React, { useEffect, useState } from "react";
 import {
-  DesktopOutlined,
-  FileOutlined,
-  PieChartOutlined,
+  LogoutOutlined,
+  SolutionOutlined,
   TeamOutlined,
-  UserOutlined,
+  SendOutlined,
+  UserSwitchOutlined,
 } from "@ant-design/icons";
 import { Breadcrumb, Layout, Menu, theme } from "antd";
 import { NavLink } from "react-router-dom";
+
+// desestructurar el componente Layout para facilitar su uso
 const { Header, Content, Footer, Sider } = Layout;
+// función auxiliar para crear un objeto de elemento para el menú
 function getItem(label, key, icon, children) {
   return {
     key,
@@ -17,14 +21,11 @@ function getItem(label, key, icon, children) {
     label,
   };
 }
-const items = [
-  getItem(<NavLink to="/">Salir</NavLink>, "3", <UserOutlined />),
-  getItem(<NavLink to="/visitas">Visitas</NavLink>, "4", <TeamOutlined />),
-  getItem(<NavLink to="/empleados">Empleados</NavLink>, "5", <FileOutlined />),
-  getItem(<NavLink to="/reportes">Reportes</NavLink>, "6", <FileOutlined />),
-];
+// Componente de la barra de navegación que representa el diseño con el menú de la barra lateral
 const Navbar = ({ children }) => {
+  // estado para controlar el colapso de la barra lateral
   const [collapsed, setCollapsed] = useState(false);
+  // usa el color del tema para el fondo del encabezado
   const {
     token: { colorBgContainer },
   } = theme.useToken();
@@ -46,17 +47,21 @@ const Navbar = ({ children }) => {
             background: "rgba(255, 255, 255, 0.2)",
           }}
         />
+        {/*// elementos del menú con enlaces a diferentes rutas*/}
         <Menu theme="dark" defaultSelectedKeys={["1"]} mode="inline">
-          <Menu.Item key={1} icon={<UserOutlined />}>
+          <Menu.Item key={1} icon={<SendOutlined />}>
             <NavLink to="/visitas">Visitas</NavLink>
           </Menu.Item>
-          <Menu.Item key={2} icon={<UserOutlined />}>
+          <Menu.Item key={2} icon={<TeamOutlined />}>
             <NavLink to="/empleados">Empleados</NavLink>
           </Menu.Item>
-          <Menu.Item key={3} icon={<UserOutlined />}>
+          <Menu.Item key={2} icon={<UserSwitchOutlined />}>
+            <NavLink to="/ingresoempleados">Ingreso Empleados</NavLink>
+          </Menu.Item>
+          <Menu.Item key={3} icon={<SolutionOutlined />}>
             <NavLink to="/reportes">Reportes</NavLink>
           </Menu.Item>
-          <Menu.Item key={4} icon={<UserOutlined />}>
+          <Menu.Item key={4} icon={<LogoutOutlined />}>
             <NavLink to="/">Salir</NavLink>
           </Menu.Item>
         </Menu>
