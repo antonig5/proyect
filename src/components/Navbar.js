@@ -6,6 +6,7 @@ import {
   TeamOutlined,
   SendOutlined,
   UserSwitchOutlined,
+  CheckOutlined,
 } from "@ant-design/icons";
 import { Breadcrumb, Layout, Menu, theme } from "antd";
 import { NavLink } from "react-router-dom";
@@ -61,7 +62,11 @@ const Navbar = ({ children }) => {
           <Menu.Item key={3} icon={<SolutionOutlined />}>
             <NavLink to="/reportes">Reportes</NavLink>
           </Menu.Item>
-          <Menu.Item key={4} icon={<LogoutOutlined />}>
+          <Menu.Item key={4} icon={<CheckOutlined />}>
+            <NavLink to="/aprobarvisitas">Aprobar visitas</NavLink>
+          </Menu.Item>
+
+          <Menu.Item key={5} icon={<LogoutOutlined />}>
             <NavLink to="/">Salir</NavLink>
           </Menu.Item>
         </Menu>
