@@ -10,7 +10,7 @@ import {
 } from "@ant-design/icons";
 import { Breadcrumb, Layout, Menu, theme } from "antd";
 import { NavLink } from "react-router-dom";
-import { useSelector } from 'react-redux';
+import { useSelector } from "react-redux";
 import Sidebar from "./Sidebar";
 
 // desestructurar el componente Layout para facilitar su uso
@@ -28,14 +28,11 @@ function getItem(label, key, icon, children) {
 const Navbar = ({ children }) => {
   // estado para controlar el colapso de la barra lateral
   const [collapsed, setCollapsed] = useState(false);
-  const user= useSelector((state)=>state.user)
+  const user = useSelector((state) => state.user);
   // usa el color del tema para el fondo del encabezado
   const {
     token: { colorBgContainer },
   } = theme.useToken();
-
-
-
 
   return (
     <Layout
@@ -43,10 +40,8 @@ const Navbar = ({ children }) => {
         minHeight: "100vh",
       }}
     >
-      {user.jwt ?
-         <Sidebar/>:null
-      }
-    
+      {user.jwt ? <Sidebar /> : null}
+
       <Layout className="site-layout">
         <Header
           style={{
@@ -65,9 +60,7 @@ const Navbar = ({ children }) => {
           style={{
             textAlign: "center",
           }}
-        >
-          Ant Design ©2018 Created by Ant UED
-        </Footer>
+        ></Footer>
       </Layout>
     </Layout>
   );

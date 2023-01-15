@@ -1,4 +1,3 @@
-
 // importa los componentes necesarios de las bibliotecas react y antd
 import React, { useEffect, useState } from "react";
 import {
@@ -11,9 +10,9 @@ import {
 } from "@ant-design/icons";
 import { Breadcrumb, Layout, Menu, theme } from "antd";
 import { NavLink } from "react-router-dom";
-import { useSelector } from 'react-redux';
-import { useDispatch } from 'react-redux';
-import { setUser } from '../redux/actions';
+import { useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
+import { setUser } from "../redux/actions";
 
 const { Header, Content, Footer, Sider } = Layout;
 function Sidebar(props) {
@@ -25,17 +24,14 @@ function Sidebar(props) {
     token: { colorBgContainer },
   } = theme.useToken();
 
+  const dispatch = useDispatch();
 
- const dispatch = useDispatch();
-   
+  useEffect(() => {
+    if (!user.jwt) {
+      window.location.href = "/";
+    }
+  }, [user]);
 
-
-    useEffect(() => {
-         if (!user.jwt) {
-           window.location.href = "/";
-         }
-    },[user])
-    
   return (
     <>
       <Sider
@@ -70,11 +66,11 @@ function Sidebar(props) {
           {user.jwt ? (
             user.user.role.name == "Administrador" ? (
               <>
-                <Menu.Item key={2} icon={<TeamOutlined />}>
+                <Menu.Item key={3} icon={<TeamOutlined />}>
                   <NavLink to="/empleados">Empleados</NavLink>
                 </Menu.Item>
 
-                <Menu.Item key={3} icon={<SolutionOutlined />}>
+                <Menu.Item key={4} icon={<SolutionOutlined />}>
                   <NavLink to="/reportes">Reportes</NavLink>
                 </Menu.Item>
               </>
@@ -84,16 +80,20 @@ function Sidebar(props) {
           {user.jwt ? (
             user.user.role.name == "Secretario" ||
             user.user.role.name == "Administrador" ? (
-              <Menu.Item key={4} icon={<CheckOutlined />}>
+              <Menu.Item key={5} icon={<CheckOutlined />}>
                 <NavLink to="/aprobarvisitas">Aprobar visitas</NavLink>
               </Menu.Item>
             ) : null
           ) : null}
           {user.jwt ? (
-            <Menu.Item key={5} icon={<LogoutOutlined />}>
-                          <NavLink onClick={() => {
-                              dispatch(setUser({}))
-              }}>Salir</NavLink>
+            <Menu.Item key={6} icon={<LogoutOutlined />}>
+              <NavLink
+                onClick={() => {
+                  dispatch(setUser({}));
+                }}
+              >
+                Salir
+              </NavLink>
             </Menu.Item>
           ) : null}
         </Menu>

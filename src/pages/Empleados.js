@@ -19,44 +19,58 @@ import Constants from "../utils/Constants";
 const { Option } = Select;
 
 const Empleados = () => {
-    const user = useSelector((state) => state.user);
-    if (!user.jwt) {
-      window.location.href = "/";
-    }
+  // Estado para obtener el usuario actualmente logueado
+  const user = useSelector((state) => state.user);
+  // Si el usuario no tiene un token de JWT, redirigir al inicio de sesión
+  if (!user.jwt) {
+    window.location.href = "/";
+  }
+  // Estado para almacenar los datos de los empleados
   const [data, setData] = useState([]);
+  // Estado para almacenar los datos de los vehículos de los empleados
   const [datos, setDatos] = useState([]);
+  // Estado para controlar si el modal de edición de empleado está abierto o cerrado
   const [isModalOpen, setIsModalOpen] = useState(false);
+  // Estado para controlar si el modal de edición de vehículo está abierto o cerrado
   const [ModalOpen, setModalOpen] = useState(false);
+  // Estado para almacenar las marcas de los vehículos
   const [marca, setMarca] = useState([]);
+  // Estado para almacenar los tipos de vehículos
   const [tipo, setTipo] = useState([]);
+  // Estado para almacenar el ID del empleado seleccionado para editar
   const [id, setID] = useState({});
+  // Utilizando "Form.useForm()" para inicializar el formulario de edición de empleado
   const [form] = Form.useForm();
-
+  // Estado para almacenar los datos de los vehículos del empleado seleccionado para editar
   const [dataEditCar, setDataEditCar] = useState([]);
+  // Función para abrir el modal de edición de vehículos
   const showModall = () => {
     setModalOpen(true);
   };
-
+  // Función para abrir el modal de edición de empleado
   const showModal = () => {
     setIsModalOpen(true);
   };
+  // Función para manejar la confirmación del modal de edición de empleado
   const handleOk = () => {
     setIsModalOpen(false);
     setModalOpen(false);
   };
+  // Función para manejar la cancelación del modal de edición de empleado
   const handleCancel = () => {
     setIsModalOpen(false);
     setModalOpen(false);
   };
+  // Función para manejar el envío del formulario de edición de empleado
   const onFinishs = (values) => {
     console.log("Received values of form:", values);
   };
-
+  // Columnas para mostrar en la tabla de empleados
   const columns = [
     {
-      title: "Id",
-      dataIndex: "id",
-      key: "id",
+      title: "Id", // Título de la columna
+      dataIndex: "id", // Nombre de la propiedad en los datos de la tabla
+      key: "id", // Llave única para cada fila
     },
     {
       title: "Username",
@@ -81,9 +95,11 @@ const Empleados = () => {
     },
 
     {
-      title: "Action",
-      key: "action",
-      render: (data) => (
+      title: "Acción", // Título de la columna
+      key: "action", // Llave única para cada fila
+      render: (
+        data // Renderizar los botones de eliminar y editar
+      ) => (
         <Space size="middle">
           <Button onClick={() => DeleteUsers(data.id)} danger type="primary">
             Eliminar
@@ -92,6 +108,7 @@ const Empleados = () => {
           <Button
             type="primary"
             onClick={() => {
+              // Función para manejar el evento de clic en el botón de editar
               setID(data);
               const arr = [];
               data.vehiculos.map((element) => {
@@ -106,6 +123,7 @@ const Empleados = () => {
               console.log(arr);
               setDataEditCar(arr);
               setIsModalOpen(true);
+              // Establecer los valores predeterminados en los campos del formulario de edición de empleado
               form.setFieldsValue({ documento: data.documento });
               form.setFieldsValue({ nombre: data.nombre });
               form.setFieldsValue({ apellido: data.apellido });
@@ -244,11 +262,16 @@ const Empleados = () => {
           password: value.password,
           dependencia: value.dependencia,
           role: value.role,
+          horario: {
+            connect: [{ id: value.horario }],
+          },
         }),
       }
     )
       .then((res) => res.json())
       .then((res) => {
+        setModalOpen(false);
+        GetUsers();
         console.log(res);
         value.vehiculo.map((element) => {
           fetch(`${Constants.URL}/api/vehiculos`, {
@@ -293,7 +316,7 @@ const Empleados = () => {
   const onFinishFailed = (errorInfo) => {
     console.log("Failed:", errorInfo);
   };
-
+  // Función para eliminar un empleado
   const DeleteUsers = (id) => {
     fetch(`${Constants.URL}/api/users/${id}`, {
       method: "DELETE",
@@ -660,8 +683,29 @@ const Empleados = () => {
 
               <Form.Item name="role">
                 <Select placeholder="Rol">
-                  <Option key={1}>Empleado</Option>
-                  <Option key={2}>Secretario</Option>
+                  <Option key={1} value="portero">
+                    Portero
+                  </Option>
+                  <Option key={2} value="secretario">
+                    Secretario
+                  </Option>
+                  <Option key={2} value="Administrador">
+                    Administrador
+                  </Option>
+                  <Option key={2} value="jefe dependencia">
+                    Jefe de Dependencia
+                  </Option>
+                </Select>
+              </Form.Item>
+
+              <Form.Item name="horario">
+                <Select placeholder="Jornada">
+                  <Option key={1} value="1">
+                    Mañana
+                  </Option>
+                  <Option key={2} value="2">
+                    Tarde
+                  </Option>
                 </Select>
               </Form.Item>
             </Col>

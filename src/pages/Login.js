@@ -1,11 +1,20 @@
-import React,{useState} from "react";
+import React, { useState } from "react";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
-import { Button, Checkbox, Col, Form, Image, Input, Row } from "antd";
+import {
+  Button,
+  Checkbox,
+  Col,
+  Form,
+  Image,
+  Input,
+  Row,
+  Typography,
+} from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { setUser } from "../redux/actions";
 import Constants from "../utils/Constants";
 import Visitantes from "./Visitantes";
-
+const { Title } = Typography;
 const Login = () => {
   // El componente cuenta con una función 'onFinish' que se ejecuta al presionar el botón de iniciar sesión, esta función se encarga de hacer la petición POST y actualizar el estado del usuario con la respuesta.
   // El formulario cuenta con validaciones para que el campo de correo sea un correo válido y el campo de contraseña no sea vacío.
@@ -29,8 +38,6 @@ const Login = () => {
     })
       .then((res) => res.json())
       .then((res) => {
-
-
         console.log(res);
 
         const user = res;
@@ -50,22 +57,30 @@ const Login = () => {
               console.log(res1);
               dispatch(setUser(user));
             });
-        } 
-
-        
+        }
       });
   };
 
-     if (user.jwt) {
-       window.location.href="/visitas";
-     }
+  if (user.jwt) {
+    window.location.href = "/visitas";
+  }
 
   return (
     <>
       <Row>
-        <Col span={12}>
+        <Col span={8}>
+          <Title
+            style={{
+              marginLeft: 100,
+              fontSize: 100,
+              marginBottom: 20,
+              marginTop: 20,
+            }}
+          >
+            Login
+          </Title>
           <Form
-            style={{ marginLeft: 100, marginTop: 200 }}
+            style={{ marginLeft: 100 }}
             name="normal_login"
             className="login-form"
             initialValues={{
@@ -102,10 +117,10 @@ const Login = () => {
                 style={{ width: 300 }}
               />
             </Form.Item>
-            <p style={{ color: "red" }}>{ respuiesta}</p>
+            <p style={{ color: "red" }}>{respuiesta}</p>
             <Form.Item>
               <a className="login-form-forgot" href="/recuperar">
-                Forgot password
+                ¿ Olvidaste tu contraseña?
               </a>
             </Form.Item>
 
@@ -118,13 +133,18 @@ const Login = () => {
                 Iniciar sesion
               </Button>
             </Form.Item>
+            <Form.Item>
+              <a className="login-form-forgot" href="/visitantes">
+                Crea tu visita
+              </a>
+            </Form.Item>
           </Form>
         </Col>
 
         <Col span={12}>
           <Image
             src="https://cdn.pixabay.com/photo/2015/04/28/19/34/ink-744224_960_720.jpg"
-            style={{ width: "100%" }}
+            style={{ width: "100%", height: 646 }}
           />
         </Col>
       </Row>
