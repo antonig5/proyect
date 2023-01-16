@@ -220,6 +220,61 @@ const IngresoEmpleados = () => {
   const ingresarVehiculo = (data) => {
     console.log(data);
     if (data.topvehiculo == "moto") {
+           fetch(
+             `${Constants.URL}/api/parqueaderomotos?filters[id][$gt]=0&filters[estado][$eq]=false`,
+             {
+               method: "GET",
+               headers: {
+                 "content-type": "application/json",
+               },
+             }
+           )
+             .then((res) => res.json())
+             .then((res) => {
+               console.log("ingreso");
+               //agregar ingreso
+               fetch(
+                 `${Constants.URL}/api/ingresovehiculos?populate[0]=parqueadero&populate[1]=parqueaderomoto`,
+                 {
+                   method: "POST",
+                   headers: {
+                     "content-type": "application/json",
+                   },
+                   body: JSON.stringify({
+                     data: {
+                       parqueaderomoto: res.data[0].id,
+                       vehiculo: data.idv,
+                     },
+                   }),
+                 }
+               )
+                 .then((resi) => resi.json())
+                 .then((resi) => {
+                 
+                 
+
+                   fetch(
+                     `${Constants.URL}/api/parqueaderomotos/${resi.data.attributes.parqueaderomoto.data.id}`,
+                     {
+                       method: "PUT",
+                       headers: {
+                         "content-type": "application/json",
+                       },
+                       body: JSON.stringify({
+                         data: {
+                           estado: true,
+                         },
+                       }),
+                     }
+                   )
+                     .then((resm) => resm.json())
+                     .then((resm) => {
+                       console.log(resi);
+                       onSearch(datos.id);
+                       message.success("Parqueadero asignado #" + resm.data.id);
+                     });
+                 });
+             });
     } else if (data.topvehiculo == "carro") {
       fetch(
         `${Constants.URL}/api/parqueaderos?filters[id][$gt]=2&filters[id][$lte]=35&filters[estado][$eq]=false&pagination[limit]=100`,
@@ -249,12 +304,7 @@ const IngresoEmpleados = () => {
           )
             .then((resi) => resi.json())
             .then((resi) => {
-              console.log(resi);
-              onSearch(datos.id);
-              message.success(
-                "Parqueadero asignado #" +
-                  resi.data.attributes.parqueadero.data.id
-              );
+            
 
               fetch(
                 `${Constants.URL}/api/parqueaderos/${resi.data.attributes.parqueadero.data.id}`,
@@ -285,9 +335,10 @@ const IngresoEmpleados = () => {
   };
 
   const salidaVehiculo = (data) => {
+    console.log("salida ");
     console.log(data);
     fetch(
-      `${Constants.URL}/api/vehiculos/${data.idv}?populate[0]=ingresovehiculos.parqueadero`,
+      `${Constants.URL}/api/vehiculos/${data.idv}?populate[0]=ingresovehiculos.parqueadero&populate[1]=ingresovehiculos.parqueaderomoto`,
       {
         method: "GET",
         headers: {
@@ -317,26 +368,53 @@ const IngresoEmpleados = () => {
               .then((res) => {
                 console.log(res);
                 //liberar parqueadero
-                fetch(
-                  `${Constants.URL}/api/parqueaderos/${ingreso.attributes.parqueadero.data.id}`,
-                  {
-                    method: "PUT",
-                    headers: {
-                      "content-type": "application/json",
-                    },
-                    body: JSON.stringify({
-                      data: {
-                        estado: false,
+                if (data.topvehiculo == "carro") {
+                  fetch(
+                    `${Constants.URL}/api/parqueaderos/${ingreso.attributes.parqueadero.data.id}`,
+                    {
+                      method: "PUT",
+                      headers: {
+                        "content-type": "application/json",
                       },
-                    }),
-                  }
-                )
-                  .then((res) => res.json())
-                  .then((res) => {
-                    console.log(res);
-                    message.success("el Vehiculo a salido con exito");
-                    onSearch(datos.id);
-                  });
+                      body: JSON.stringify({
+                        data: {
+                          estado: false,
+                        },
+                      }),
+                    }
+                  )
+                    .then((res) => res.json())
+                    .then((res) => {
+                      console.log(res);
+                      message.success("el Vehiculo a salido con exito");
+                      onSearch(datos.id);
+                    });
+                } else {
+                  console.log(ingreso.attributes);
+
+                  fetch(
+                    `${Constants.URL}/api/parqueaderomotos/${ingreso.attributes.parqueaderomoto.data.id}`,
+                    {
+                      method: "PUT",
+                      headers: {
+                        "content-type": "application/json",
+                      },
+                      body: JSON.stringify({
+                        data: {
+                          estado: false,
+                        },
+                      }),
+                    }
+                  )
+                    .then((res) => res.json())
+                    .then((res) => {
+                      console.log(res);
+                      message.success("el Vehiculo a salido con exito");
+                      onSearch(datos.id);
+                    });
+                }
+
+                ///fin liberar
               });
           }
         });
@@ -505,7 +583,7 @@ const IngresoEmpleados = () => {
   const onSearch = (value) => {
     // Realiza una petición GET a la ruta especificada en "Constants.URL" para buscar el visitante
     fetch(
-      `${Constants.URL}/api/users/${value}?populate[0]=vehiculos.ingresovehiculos.parqueadero&populate[1]=elementos&populate[2]=ingreso_empleados&populate[3]=horario&populate[4]=dependencia`
+      `${Constants.URL}/api/users/${value}?populate[0]=vehiculos.ingresovehiculos.parqueadero&populate[1]=elementos&populate[2]=ingreso_empleados&populate[3]=horario&populate[4]=dependencia&populate[5]=vehiculos.ingresovehiculos.parqueaderomoto`
     )
       .then((res) => res.json())
       .then((res) => {
@@ -536,10 +614,10 @@ const IngresoEmpleados = () => {
         setElementos(arrayelementos);
         res.vehiculos.map((v) => {
           const litain = v.ingresovehiculos;
-          console.log(litain);
+          console.log(v.ingresovehiculos);
 
           const d = litain.filter((el) => el.estado === 1);
-
+console.log("busqueda vi");
           console.log(d);
           array.push({
             key: v.id,
@@ -547,18 +625,22 @@ const IngresoEmpleados = () => {
             idv: v.id,
             topvehiculo: v.topvehiculo,
             estadob:
-              v.ingresovehiculos !== null
+              v.ingresovehiculos.length > 0
                 ? d.length > 0
                   ? 1
                   : null
                 : "no ha ingresado",
             estado:
-              v.ingresovehiculos !== null
+              v.ingresovehiculos.length > 0
                 ? `${
+                    (console.log("fff"),
                     d.length > 0
-                      ? "ingresado par" + v.ingresovehiculos[0].parqueadero.id
-                      : "no ha ingresado"
-                  }  `
+                      ? d[0].parqueadero == null
+                        ? "ingreso par:" +
+                          d[0].parqueaderomoto.id
+                        : "ingreso par:" + d[0].parqueadero.id
+                      : "no ha ingresado")
+                  }`
                 : "no ha ingresado",
           });
         });

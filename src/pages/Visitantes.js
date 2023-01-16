@@ -17,6 +17,7 @@ import {
   Select,
   Col,
 } from "antd";
+import { json } from "react-router-dom";
 //importacion de react y and
 const { Option } = Select;
 const { RangePicker } = DatePicker;
@@ -27,6 +28,7 @@ const Visitantes = () => {
   const [data, setData] = useState([]);
   const [dependencias, setDependencia] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [datauser, setDatauser] = useState({})
   const showModal = () => {
     setIsModalOpen(true);
   };
@@ -54,6 +56,9 @@ const Visitantes = () => {
       .then((res) => res.json())
       .then((res) => {
         if ((res.status = 200)) {
+          console.log("visitentes");
+console.log(res);
+          setDatauser(res.data)
           fetch(`${Constants.URL}/api/visitas`, {
             method: "POST",
             headers: {
@@ -82,15 +87,40 @@ const Visitantes = () => {
     // Can not select days before today and today
     return current && current < dayjs().add(23.9, "hour");
   };
-  function downloadBarcode() {
+  function downloadBarcode(data) {
     const barcode = document.getElementById("barcode");
 
     domtoimage.toJpeg(barcode, { quality: 0.95 }).then(function (dataUrl) {
       var img = new Image();
       img.src = dataUrl;
+      var link = document.createElement("a");
+       link.download = "my-image-name.jpeg";
+       link.href = dataUrl;
+       link.click();
 
-      console.log(dataUrl.toString());
-      document.getElementById("a").appendChild(img);
+      //console.log(dataUrl.toString());
+     // document.getElementById("a").appendChild(img);
+
+
+      fetch(`${Constants.URL}/api/correosenviars`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          data: {
+            correo: datauser.attributes.email,
+          imagentxt: dataUrl,
+          codigoingreso: data.id+"",
+          }
+          
+        }),
+      }).then((res) => res, json())
+        .then((res)=>{
+          console.log(res);
+        //  window.location.reload()
+        });
+
     });
   }
   ///dependencia de la visita
@@ -294,7 +324,7 @@ const Visitantes = () => {
           </div>
           <div id="a"></div>
 
-          <Button onClick={downloadBarcode}>Descargar</Button>
+          <Button onClick={()=>{ downloadBarcode(data)}}>Descargar y enviar al correo electronico</Button>
         </Modal>
       ) : null}
     </>

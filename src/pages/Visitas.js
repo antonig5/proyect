@@ -637,16 +637,17 @@ setModalOpen(false);
             });
           }
         
-
+          
 
 setElementos(arrayelementos);
           res.data.attributes.visitante.data.attributes.vehiculos.data.map(
             (v) => {
               const litain = v.attributes.ingresovehiculos.data;
+              console.log("vehiculos");
               console.log(litain);
 
               const d = litain.filter((el) => el.attributes.estado === 1);
-
+console.log("vehiculos2");
               console.log(d);
               array.push({
                 key: v.id,
@@ -662,26 +663,22 @@ setElementos(arrayelementos);
                 estado:
                   v.attributes.ingresovehiculos.data !== null
                     ? `${
+                        (console.log("fff"),
                         d.length > 0
-                          ? v.attributes.ingresovehiculos.data[0].attributes
-                              .parqueadero == null
-                            ? "Ingresado par:" +
-                              v.attributes.ingresovehiculos.data[0].attributes
-                                .parqueadero.data.id
-                            : "Ingresado par:" +
-                              v.attributes.ingresovehiculos.data[0].attributes
-                                .parqueaderomoto.data.id
-                          : "no ha ingresado"
-                      }  `
+                          ? d[0].attributes.parqueadero.data == null
+                            ? "ingreso par:" +
+                              d[0].attributes.parqueaderomoto.data.id
+                            : "ingreso par:" +
+                              d[0].attributes.parqueadero.data.id
+                          : "no ha ingresado")
+                      }`
                     : "no ha ingresado",
               });
             }
           );
           setVehiculos(array);
 
-          console.log(
-            res.data.attributes.visitante.data.attributes.vehiculos.data
-          );
+      
 
           setDatos(res.data);
         }
@@ -809,7 +806,6 @@ console.log(res);
 
   return (
     <>
-      {console.log(user)}
       <Search
         placeholder="input search text"
         allowClear
@@ -974,8 +970,8 @@ console.log(res);
             </Card>
           </Col>
           <Col span={8}>
-            <Card title="Feha Estimada de Salida" bordered={false}>
-              {datos.id > 0 ? datos.attributes.salida : null}
+            <Card title="Tiempo Estimado de visita" bordered={false}>
+              {datos.id > 0 ? datos.attributes.tiempovisita : null}
             </Card>
           </Col>
           <Col span={8}>
