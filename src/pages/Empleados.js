@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import domtoimage from "dom-to-image";
+
 import { useSelector } from "react-redux";
 import {
   Button,
@@ -15,10 +17,13 @@ import {
 } from "antd";
 import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
 import Constants from "../utils/Constants";
+import Barcode from "react-barcode";
+
 
 const { Option } = Select;
 
 const Empleados = () => {
+
   // Estado para obtener el usuario actualmente logueado
   const user = useSelector((state) => state.user);
   // Si el usuario no tiene un token de JWT, redirigir al inicio de sesión
@@ -43,9 +48,14 @@ const Empleados = () => {
   const [form] = Form.useForm();
   // Estado para almacenar los datos de los vehículos del empleado seleccionado para editar
   const [dataEditCar, setDataEditCar] = useState([]);
+    const [code, setCode] = useState({});
+  const [OpenCode, setOpenCode] = useState(false);
   // Función para abrir el modal de edición de vehículos
   const showModall = () => {
     setModalOpen(true);
+  };
+  const abrirModall = () => {
+    setOpenCode(true)
   };
   // Función para abrir el modal de edición de empleado
   const showModal = () => {
@@ -55,11 +65,13 @@ const Empleados = () => {
   const handleOk = () => {
     setIsModalOpen(false);
     setModalOpen(false);
+    setOpenCode(false)
   };
   // Función para manejar la cancelación del modal de edición de empleado
   const handleCancel = () => {
     setIsModalOpen(false);
     setModalOpen(false);
+     setOpenCode(false);
   };
   // Función para manejar el envío del formulario de edición de empleado
   const onFinishs = (values) => {
@@ -270,6 +282,7 @@ const Empleados = () => {
     )
       .then((res) => res.json())
       .then((res) => {
+        setCode(res.user)
         setModalOpen(false);
         GetUsers();
         console.log(res);
@@ -360,6 +373,25 @@ const Empleados = () => {
     GetUsers();
   }, []);
 
+
+function downloadBarcode() {
+  const barcode = document.getElementById("barcode");
+
+  domtoimage.toJpeg(barcode, { quality: 0.95 }).then(function (dataUrl) {
+    var img = new Image();
+    img.src = dataUrl;
+    var link = document.createElement("a");
+    link.download = "my-image-name.jpeg";
+    link.href = dataUrl;
+    link.click();
+
+    //console.log(dataUrl.toString());
+    // document.getElementById("a").appendChild(img);
+
+   
+  });
+}
+  
   return (
     <>
       <Modal
@@ -412,7 +444,7 @@ const Empleados = () => {
                   },
                 ]}
               >
-                <Input />
+                <Input maxLength={2} />
               </Form.Item>
               <Form.Item
                 name="email"
@@ -591,7 +623,6 @@ const Empleados = () => {
                   },
                   {
                     required: true,
-                    message: "Please input your username!",
                   },
                 ]}
               >
@@ -603,18 +634,16 @@ const Empleados = () => {
                 rules={[
                   {
                     required: true,
-                    message: "Please input your password!",
                   },
                 ]}
               >
-                <Input placeholder="Nombre" />
+                <Input placeholder="Nombre" maxLength={10} />
               </Form.Item>
               <Form.Item
                 name="apellido"
                 rules={[
                   {
                     required: true,
-                    message: "Please input your password!",
                   },
                 ]}
               >
@@ -625,11 +654,10 @@ const Empleados = () => {
                 rules={[
                   {
                     required: true,
-                    message: "Please input your password!",
                   },
                 ]}
               >
-                <Input placeholder="Edad" />
+                <InputNumber placeholder="Edad" maxLength={2} />
               </Form.Item>
 
               <Form.Item
@@ -637,7 +665,6 @@ const Empleados = () => {
                 rules={[
                   {
                     required: true,
-                    message: "Please input your password!",
                   },
                 ]}
               >
@@ -650,7 +677,6 @@ const Empleados = () => {
                   {
                     type: "email",
                     required: true,
-                    message: "Please input your password!",
                   },
                 ]}
               >
@@ -662,11 +688,16 @@ const Empleados = () => {
                 rules={[
                   {
                     required: true,
-                    message: "Please input your password!",
+                  },
+                  {
+                    min: 8,
+                  },
+                  {
+                    max: 16,
                   },
                 ]}
               >
-                <Input.Password placeholder="Password" />
+                <Input.Password placeholder="Password" maxLength={16} />
               </Form.Item>
 
               <Form.Item name="dependencia">
@@ -730,7 +761,6 @@ const Empleados = () => {
                           rules={[
                             {
                               required: true,
-                              message: "Missing first name",
                             },
                           ]}
                         >
@@ -742,7 +772,6 @@ const Empleados = () => {
                           rules={[
                             {
                               required: true,
-                              message: "Missing last name",
                             },
                           ]}
                         >
@@ -762,7 +791,6 @@ const Empleados = () => {
                           rules={[
                             {
                               required: true,
-                              message: "Missing last name",
                             },
                           ]}
                         >
@@ -817,12 +845,25 @@ const Empleados = () => {
               span: 16,
             }}
           >
-            <Button type="primary" htmlType="submit">
+            <Button type="primary" htmlType="submit" onClick={abrirModall}>
               Agregar
             </Button>
           </Form.Item>
         </Form>
       </Modal>
+      {console.log(code.id)}
+      <Modal title="Basic Modal" open={OpenCode} onOk={handleOk}>
+        <div id="barcode">
+          <Barcode value={code.id} /> 
+     </div>
+       <id id='a'></id>
+        
+        <Button onClick={downloadBarcode()}>
+          Descargar
+        </Button>
+       
+      </Modal>
+
       <Table columns={columns} dataSource={datos} />
     </>
   );

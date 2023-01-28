@@ -19,6 +19,7 @@ import {
 } from "antd";
 import { json } from "react-router-dom";
 //importacion de react y and
+
 const { Option } = Select;
 const { RangePicker } = DatePicker;
 const Visitantes = () => {
@@ -50,6 +51,9 @@ const Visitantes = () => {
           edad: data.edad,
           celular: data.celular,
           email: data.email,
+          dependencia: {
+            connect: [{id: data.dependencia}]
+          }
         },
       }),
     })
@@ -69,8 +73,8 @@ console.log(res);
                 motivo: data.motivo,
                 asunto: data.asunto,
                 visitante: res.data.id,
-                entrada: data.fecha[0],
-                salida: data.fecha[1],
+                entrada: data.fecha,
+                tiempovisita: data.tiempovisita,
                 tipovisitante: "visitante",
               },
             }),
@@ -219,7 +223,7 @@ console.log(res);
             },
           ]}
         >
-          <InputNumber placeholder="Celular" minLength={1} maxLength={16} />
+          <InputNumber placeholder="Celular" minLength={1} maxLength={10} />
         </Form.Item>
 
         <Form.Item

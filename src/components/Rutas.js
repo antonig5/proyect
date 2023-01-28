@@ -17,17 +17,17 @@ import ListaEmpleado from "../pages/reportes/ListaEmpleado";
 import ListaVisitantes from "../pages/reportes/ListaVisitantes";
 import RouterError from "../pages/RouterError";
 import AprobarVisitas from "../pages/AprobarVisitas";
-import Recuperar from "../pages/Recuperar";
-import Resetpass from "../pages/Resetpass";
+import Recuperar from '../pages/Recuperar';
+import Resetpass from '../pages/Resetpass';
 const Rutas = () => {
   return (
     <>
       <Routes>
         {/* Ruta principal que muestra el componente Home */}
-        <Route path="/home" element={<Home />} />
-        {/* Ruta para el login */}
+        <Route path="/home" element={<Home/>} />
         <Route path="/" element={<Login />} />
-        {/* Rutas para recuperar pass */}
+        {/* Ruta para el login */}
+        <Route path="/login" element={<Login />} />
         <Route path="/resetpass" element={<Resetpass />} />
         <Route path="/recuperar" element={<Recuperar />} />
         {/* Ruta para la página de visitantes */}

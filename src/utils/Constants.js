@@ -1,5 +1,5 @@
 const Constants = {
-  URL: "http://192.168.0.111:1337",
+  URL: "http://190.147.162.36:1339",
 };
 
 export default Constants;

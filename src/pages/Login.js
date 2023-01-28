@@ -8,6 +8,7 @@ import {
   Image,
   Input,
   Row,
+  Space,
   Typography,
 } from "antd";
 import { useDispatch, useSelector } from "react-redux";
@@ -62,86 +63,82 @@ const Login = () => {
   };
 
   if (user.jwt) {
-    window.location.href = "/visitas";
+    window.location.href = "/home";
   }
 
   return (
     <>
       <Row>
-        <Col span={8}>
-          <Title
-            style={{
-              marginLeft: 100,
-              fontSize: 100,
-              marginBottom: 20,
-              marginTop: 20,
-            }}
-          >
-            Login
-          </Title>
-          <Form
-            style={{ marginLeft: 100 }}
-            name="normal_login"
-            className="login-form"
-            initialValues={{
-              remember: true,
-            }}
-            onFinish={onFinish}
-          >
-            <Form.Item
-              name="email"
-              rules={[
-                {
-                  type: "email",
-                  required: true,
-                },
-              ]}
-            >
-              <Input
-                prefix={<UserOutlined className="site-form-item-icon" />}
-                placeholder="E-mail"
-                style={{ width: 300 }}
-              />
-            </Form.Item>
-            <Form.Item
-              name="password"
-              rules={[
-                {
-                  required: true,
-                },
-              ]}
-            >
-              <Input.Password
-                prefix={<LockOutlined className="site-form-item-icon" />}
-                placeholder="Password"
-                style={{ width: 300 }}
-              />
-            </Form.Item>
-            <p style={{ color: "red" }}>{respuiesta}</p>
-            <Form.Item>
-              <a className="login-form-forgot" href="/recuperar">
-                ¿ Olvidaste tu contraseña?
-              </a>
-            </Form.Item>
+        <Col lg={12} sm={24}>
+          <div className="space-align-block">
+            <Space style={{ marginTop:'100px', display: "flex", flexDirection:'column',justifyContent:'center', alignItems: 'center' }}>
+              <Title>Login</Title>
+          
+                <Form
+                  name="normal_login"
+                  className="login-form"
+                  initialValues={{
+                    remember: true,
+                  }}
+                  onFinish={onFinish}
+                >
+                  <Form.Item
+                    name="email"
+                    rules={[
+                      {
+                        type: "email",
+                        required: true,
+                      },
+                    ]}
+                  >
+                    <Input
+                      prefix={<UserOutlined className="site-form-item-icon" />}
+                      placeholder="E-mail"
+                      style={{ width: 300 }}
+                    />
+                  </Form.Item>
+                  <Form.Item
+                    name="password"
+                    rules={[
+                      {
+                        required: true,
+                      },
+                    ]}
+                  >
+                    <Input.Password
+                      prefix={<LockOutlined className="site-form-item-icon" />}
+                      placeholder="Password"
+                      style={{ width: 300 }}
+                    />
+                  </Form.Item>
+                  <p style={{ color: "red" }}>{respuiesta}</p>
+                  <Form.Item>
+                    <a className="login-form-forgot" href="/recuperar">
+                      ¿ Olvidaste tu contraseña?
+                    </a>
+                  </Form.Item>
 
-            <Form.Item>
-              <Button
-                type="primary"
-                htmlType="submit"
-                className="login-form-button"
-              >
-                Iniciar sesion
-              </Button>
-            </Form.Item>
-            <Form.Item>
-              <a className="login-form-forgot" href="/visitantes">
-                Crea tu visita
-              </a>
-            </Form.Item>
-          </Form>
+                  <Form.Item>
+                    <Button
+                      type="primary"
+                      htmlType="submit"
+                      className="login-form-button"
+                    >
+                      Iniciar sesion
+                    </Button>
+                  </Form.Item>
+                  <Form.Item>
+                    <a className="login-form-forgot" href="/visitantes">
+                      Crea tu visita
+                    </a>
+                  </Form.Item>
+                </Form>
+             
+            </Space>
+          </div>
         </Col>
 
-        <Col span={12}>
+        <Col lg={12} sm={24}>
           <Image
             src="https://cdn.pixabay.com/photo/2015/04/28/19/34/ink-744224_960_720.jpg"
             style={{ width: "100%", height: 646 }}

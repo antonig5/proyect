@@ -1,6 +1,6 @@
 import React from "react";
 import { useSelector } from "react-redux";
-
+import "antd/dist/reset.css";
 import { BrowserRouter as Router } from "react-router-dom";
 import Navbar from "./components/Navbar";
 
